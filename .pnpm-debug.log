@@ -3,37 +3,22 @@
     "selected": 1,
     "workspacePrefix": "/Users/sarahchavez/Documents/Projects/donut_finder"
   },
-  "1 debug pnpm:package-manifest": {
-    "initial": {
-      "registry": "https://nexus.core.cvent.org/nexus/content/repositories/npm-local/"
-    },
-    "prefix": "/Users/sarahchavez/Documents/Projects/donut_finder"
+  "1 info pnpm": {
+    "err": {
+      "name": "Error",
+      "message": "not found: changeset",
+      "code": "ENOENT",
+      "stack": "Error: not found: changeset\n    at getNotFoundError (/Users/sarahchavez/.asdf/installs/pnpm/6.32.6/dist/pnpm.cjs:41595:51)\n    at Function.whichSync [as sync] (/Users/sarahchavez/.asdf/installs/pnpm/6.32.6/dist/pnpm.cjs:41672:13)\n    at getCommandAbsolutePathSync (/Users/sarahchavez/.asdf/installs/pnpm/6.32.6/dist/pnpm.cjs:43237:44)\n    at default_1 (/Users/sarahchavez/.asdf/installs/pnpm/6.32.6/dist/pnpm.cjs:43246:32)\n    at /Users/sarahchavez/.asdf/installs/pnpm/6.32.6/dist/pnpm.cjs:178233:39"
+    }
   },
-  "2 debug pnpm:context": {
-    "currentLockfileExists": false,
-    "storeDir": "/Users/sarahchavez/.pnpm-store/v3",
-    "virtualStoreDir": "/Users/sarahchavez/Documents/Projects/donut_finder/node_modules/.pnpm"
-  },
-  "3 debug pnpm:stage": {
+  "2 error pnpm": {
+    "code": "ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL",
     "prefix": "/Users/sarahchavez/Documents/Projects/donut_finder",
-    "stage": "resolution_started"
-  },
-  "4 error pnpm": {
-    "code": "ERR_PNPM_FETCH_404",
-    "hint": "donut_finder is not in the npm registry, or you have no permission to fetch it.\n\nNo authorization header was set for the request.",
-    "request": {
-      "url": "https://nexus.core.cvent.org/nexus/content/groups/npm-public/donut_finder"
-    },
-    "response": {
-      "size": 0
-    },
-    "pkgName": "donut_finder",
-    "pkgsStack": [],
     "err": {
       "name": "pnpm",
-      "message": "GET https://nexus.core.cvent.org/nexus/content/groups/npm-public/donut_finder: Not Found - 404",
-      "code": "ERR_PNPM_FETCH_404",
-      "stack": "pnpm: GET https://nexus.core.cvent.org/nexus/content/groups/npm-public/donut_finder: Not Found - 404\n    at RetryOperation._fn (/Users/sarahchavez/.asdf/installs/pnpm/6.32.6/dist/pnpm.cjs:85721:19)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"
+      "message": "not found: changeset",
+      "code": "ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL",
+      "stack": "Error: not found: changeset\n    at getNotFoundError (/Users/sarahchavez/.asdf/installs/pnpm/6.32.6/dist/pnpm.cjs:41595:51)\n    at Function.whichSync [as sync] (/Users/sarahchavez/.asdf/installs/pnpm/6.32.6/dist/pnpm.cjs:41672:13)\n    at getCommandAbsolutePathSync (/Users/sarahchavez/.asdf/installs/pnpm/6.32.6/dist/pnpm.cjs:43237:44)\n    at default_1 (/Users/sarahchavez/.asdf/installs/pnpm/6.32.6/dist/pnpm.cjs:43246:32)\n    at /Users/sarahchavez/.asdf/installs/pnpm/6.32.6/dist/pnpm.cjs:178233:39"
     }
   }
 }

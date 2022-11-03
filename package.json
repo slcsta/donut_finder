@@ -1,3 +1,13 @@
-{
-    "registry": "https://nexus.core.cvent.org/nexus/content/repositories/npm-local/"
-}
+    {
+        "private": true,
+        "license": "UNLICENSED",
+        "scripts": {
+          "preinstall": "npx only-allow pnpm",
+          "changeset": "changeset",
+          "release": "changeset version", 
+          "local:clean": "git clean -dfx -e .vscode"
+        },
+        "devDependencies": {
+          "@changesets/cli": "^2.24.2"
+        }
+      }

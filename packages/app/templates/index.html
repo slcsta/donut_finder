@@ -3,9 +3,24 @@
 <html lang="en">
     <head>
         <meta name="viewport" content="initial-scale=1, width=device-width">
-        <title>hello</title>
+        <title>Donut Finder</title>
     </head>
     <body>
-        hello, world
+        <div class="header">
+            <h1>Donut Shops</h1>
+            <h2>Search Donut Shops</h2>
+                <!-- Create a form for users to submit a city, state to search for donut shops -->
+                {% block body %}
+                    <form action="/" method="post">
+                        <input autocomplete=""off" autofocus name="cith" placeholder="City" type="text">
+                        <input autocomplete=""off" autofocus name="state" placeholder="State" type="text">
+                        <input type="submit" value="Sumbit">
+                    </form>
+                {% endblock %}
+
+            
+        </div>
+        <div class="container">
+            <div class="section">
     </body>
 </html>

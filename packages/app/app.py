@@ -4,13 +4,11 @@ from flask import Flask, render_template, request, redirect
 app = Flask(__name__)
 
 connection = sql.connect("dounut_shops.db")
-print "Opened database successfully";
+print("Opened database successfully")
 
 cursor = connection.cursor()
 
 connection.close()
-
-db = '/path/to/database.db'
 
 @app.route("/", methods=["GET", "POST"])
 def index():

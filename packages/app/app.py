@@ -3,6 +3,8 @@ from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
+con = sql.connect("dounut_shops.db")
+
 db = '/path/to/database.db'
 
 

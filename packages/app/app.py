@@ -1,5 +1,7 @@
-import sqlite3
+import sqlite3 as sql
 from flask import Flask, render_template, request, redirect
+
+
 
 app = Flask(__name__)
 

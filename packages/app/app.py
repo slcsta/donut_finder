@@ -1,9 +1,10 @@
 import sqlite3 as sql
 from flask import Flask, render_template, request, redirect
 
-
-
 app = Flask(__name__)
+
+db = '/path/to/database.db'
+
 
 
 @app.route("/", methods=["GET", "POST"])

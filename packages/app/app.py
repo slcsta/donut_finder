@@ -16,4 +16,5 @@ def index():
         return redirect("/")
 
     else:
-        return render_template("index.html")
+        birthdays = db.execute("SELECT * FROM shops")
+        return render_template("index.html", shops=shops)

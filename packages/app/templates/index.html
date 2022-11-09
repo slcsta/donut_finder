@@ -21,7 +21,7 @@
         
         <div class="container">
             <div class="section">
-                <h2>Donut Shops</h2>
+                <h2>All Donut Shops</h2>
                 <table>
                     <thead>
                         <tr>
@@ -31,6 +31,15 @@
                             <th>State</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        % for shop in shops %
+                        <tr>
+                            <td>{{ shop["name"] }}</td>
+                            <td>{{ shop["website"] }}</td>
+                            <td>{{ shop["rating"] }}</td>
+                            <td>{{ shop["phone"] }}</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>

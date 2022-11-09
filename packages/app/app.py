@@ -14,6 +14,6 @@ def index():
         connection = sql.connect("donut_shops.db")
         connection.row_factory = sql.Row
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM shops")
-        rows = cursor.fetchall()
-        return render_template("index.html", rows = rows)
+        shops = cursor.execute("SELECT * FROM shops")
+        #rows = cursor.fetchall()
+        return render_template("index.html", shops=shops)

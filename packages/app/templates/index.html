@@ -19,24 +19,25 @@
                 {% endblock %}  
         </div>
         
-        <div class="container">
             <div class="section">
+
                 <h2>All Donut Shops</h2>
                 <table>
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Address</th>
-                            <th>City</th>
-                            <th>State</th>
+                            <th>Rating</th>
+                            <th>Website</th>
+                            <th>Phone</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for shop in shops %}
                         <tr>
                             <td>{{ shop["name"] }}</td>
-                            <td>{{ shop["website"] }}</td>
                             <td>{{ shop["rating"] }}</td>
+                            <td>{{ shop["website"] }}</td>
                             <td>{{ shop["phone"] }}</td>
                         </tr>
                         {% endfor %}

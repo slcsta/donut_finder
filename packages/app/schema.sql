@@ -3,12 +3,12 @@ DROP TABLE IF EXISTS shops;
 CREATE TABLE shops (
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
     name TEXT, 
-    address1 TEXT, 
-    city TEXT, 
-    zip_code TEXT, 
+    website TEXT,
+    rating REAL, 
+    city TEXT,  
     state TEXT, 
-    display_address TEXT, 
-    display_phone TEXT, 
+    address TEXT, 
+    phone TEXT, 
     url TEXT
 )
 

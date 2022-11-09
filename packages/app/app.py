@@ -3,11 +3,6 @@ from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
-def get_db_connection():
-    conn = sql.connect('donut_shops.db')
-    conn.row_factory = sql.row_factory
-    return conn
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -16,5 +11,9 @@ def index():
         return redirect("/")
 
     else:
-        birthdays = db.execute("SELECT * FROM shops")
-        return render_template("index.html", shops=shops)
+        connection = sql.connect("donut_shops.db")
+        connection.row_factory = sql.Row
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM shops")
+        rows = cursor.fetchall()
+        return render_template("index.html", rows = rows)

@@ -32,13 +32,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        % for shop in shops %
+                        {% for shop in shops %}
                         <tr>
                             <td>{{ shop["name"] }}</td>
                             <td>{{ shop["website"] }}</td>
                             <td>{{ shop["rating"] }}</td>
                             <td>{{ shop["phone"] }}</td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

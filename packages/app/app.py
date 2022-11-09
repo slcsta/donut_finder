@@ -15,5 +15,4 @@ def index():
         connection.row_factory = sql.Row
         cursor = connection.cursor()
         shops = cursor.execute("SELECT * FROM shops")
-        #rows = cursor.fetchall()
         return render_template("index.html", shops=shops)

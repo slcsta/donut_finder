@@ -14,7 +14,7 @@ for business in businesses:
     state = " ".join(business["location"]["city"])
     address = " ".join(business["location"]["display_address"])
     phone = business["display_phone"]
-    print(name, website, rating)
+    print(business)
 
     f.close()
     

@@ -7,7 +7,7 @@ app = Flask(__name__)
 def index():
     if request.method == "POST":
         city = request.form.get("city")
-        state = state.form.get("state")
+        state = request.form.get("state")
         return redirect("/")
 
     else:

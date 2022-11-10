@@ -3,24 +3,26 @@
 <html lang="en">
     <head>
         <meta name="viewport" content="initial-scale=1, width=device-width">
+        <link href="/static/styles.css" rel="stylesheet">
         <title>Donut Finder</title>
     </head>
     <body>
         <div class="header">
             <h1>Donut Shops</h1>
-            <h2>Search Donut Shops</h2>
-                <!-- Create a form for users to submit a city, state to search for donut shops -->
+        </div>
+        <div class="container">
+            <div class="section">  
+                <h2>Search Donut Shops</h2>
                 {% block body %}
                     <form action="/" method="post">
                         <input autocomplete=""off" autofocus name="city" placeholder="City" type="text">
                         <input autocomplete=""off" autofocus name="state" placeholder="State" type="text">
                         <input type="submit" value="Sumbit">
                     </form>
-                {% endblock %}  
-        </div>
+                {% endblock %}
+            </div>
         
             <div class="section">
-
                 <h2>All Donut Shops</h2>
                 <table>
                     <thead>

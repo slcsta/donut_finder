@@ -18,7 +18,7 @@ def index():
     return render_template("index.html", shops=shops)
 
 @app.route("/search", methods=["GET", "POST"])
-def shop():
+def search():
     # Submit user's input via POST to /search
     # TODO Call a lookup func that searches donut shops by city & state 
     # TODO Require that a user enter a city and select state from dropdown

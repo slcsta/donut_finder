@@ -10,6 +10,6 @@ CREATE TABLE shops (
     city TEXT,  
     state TEXT, 
     zip_code TEXT,
-    phone TEXT, 
-)
+    phone TEXT 
+);
 

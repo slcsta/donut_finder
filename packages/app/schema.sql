@@ -4,11 +4,12 @@ CREATE TABLE shops (
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
     name TEXT, 
     website TEXT,
-    rating REAL, 
+    rating REAL,
+    address TEXT,
+    address2 TEXT, 
     city TEXT,  
     state TEXT, 
-    address TEXT, 
+    zip_code TEXT,
     phone TEXT, 
-    url TEXT
 )
 

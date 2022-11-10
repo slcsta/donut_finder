@@ -10,13 +10,15 @@ for business in businesses:
     name = business["name"]
     website = business["url"]
     rating = business["rating"]
-    city = " ".join(business["location"]["city"])
-    state = " ".join(business["location"]["city"])
-    address = " ".join(business["location"]["display_address"])
+    address = business["location"]["address1"]
+    address2 = business["location"]["address2"]
+    city = business["location"]["city"]
+    state = business["location"]["state"]
+    zip_code = business["location"]["zip_code"] 
+    display_address = business["location"]["display_address"]
     phone = business["display_phone"]
-    print(business)
+    print(name, address, city, state, zip_code) 
 
     f.close()
-    
-    
+
 

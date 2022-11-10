@@ -14,10 +14,10 @@ with sql.connect("donut_shops.db") as connection:
 
     with open('response.json') as f:
         shops = json.load(f))
-        print(shops)
 
     for shop in shops:
-        cursor.execute("INSERT INTO shops (name, website, rating, phone) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        (shop["name"], shop["url"], shop["rating"], shop["location"]["city"], shop["location"]["state"], shop["location"]["display_address"], shop["display_phone"]))
+        for location in shop["location"]:
+            cursor.execute("INSERT INTO shops (name, website, rating, phone) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (shop["name"], shop["url"], shop["rating"], shop["location"]["city"], shop["location"]["state"], shop["location"]["display_address"], shop["display_phone"]))
         
     connection.commit()

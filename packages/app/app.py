@@ -17,14 +17,15 @@ def index():
     shops = cursor.execute("SELECT * FROM shops")
     return render_template("index.html", shops=shops)
 
-@app.route("/shop", methods=["GET", "POST"])
+@app.route("/search", methods=["GET", "POST"])
 def shop():
-    # When form is submitted via Post
+    # Submit user's input via POST to /search
     # TODO Call a lookup func that searches donut shops by city & state 
     # TODO Require that a user enter a city and select state from dropdown
     if request.method == "POST":
-    #   city = request.form.get("city")
-    #   state = request.form.get("state")
-    
+        city = request.form.get("city")
+        state = request.form.get("state")
+
+    return render_template("searched.html", search=search)
 
         

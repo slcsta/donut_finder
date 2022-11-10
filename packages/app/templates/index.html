@@ -37,7 +37,9 @@
                         <tr>
                             <td>{{ shop["name"] }}</td>
                             <td>{{ shop["rating"] }}</td>
-                            <td>{{ shop["website"] }}</td>
+                            <td>{{ shop["address"] }}, {{ shop["address2"] }}</td>
+                            <td>{{ shop["city"] }}, {{ shop["state"] }}</td>
+                            <td>{{ shop["zip_code"] }}</td>
                             <td>{{ shop["phone"] }}</td>
                         </tr>
                         {% endfor %}

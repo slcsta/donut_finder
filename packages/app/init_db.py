@@ -1,6 +1,5 @@
 import sqlite3 as sql
 import json
-from flatten_json import flatten
 
 with open('response.json') as f:
     data = json.load(f)
@@ -14,12 +13,11 @@ with sql.connect("donut_shops.db") as connection:
         connection.executescript(s.read())
 
     with open('response.json') as f:
-        data = json.load(f)
+        shops = json.load(f))
+        print(shops)
 
-    shops = data["businesses"]
-    flatten(shops)
     for shop in shops:
-        cursor.execute("INSERT INTO shops (name, website, rating, phone) VALUES (?, ?, ?, ?)",
+        cursor.execute("INSERT INTO shops (name, website, rating, phone) VALUES (?, ?, ?, ?, ?, ?, ?)",
         (shop["name"], shop["url"], shop["rating"], shop["location"]["city"], shop["location"]["state"], shop["location"]["display_address"], shop["display_phone"]))
         
     connection.commit()

@@ -31,3 +31,15 @@ body {
     padding-right: 2rem;
     padding-top: 0.5rem;
 }
+
+table {
+    background-color: transparent;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+table th,
+table td {
+    padding: 0.75rem;
+    vertical-align: middle;
+}

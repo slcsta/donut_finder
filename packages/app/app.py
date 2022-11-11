@@ -17,7 +17,7 @@ def db_connect():
 def index():
     connection = db_connect()
     cursor = connection.cursor()
-    shops = connection.execute("SELECT * FROM shops").fetchall()
+    shops = cursor.execute("SELECT * FROM shops").fetchall()
     connection.close()
     return render_template("index.html", shops=shops)
 
@@ -30,18 +30,9 @@ def search():
         cursor = connection.cursor()
         city = request.form.get("city")
         state = request.form.get("state")
-    # TODO Lookup func that searches donut shops by city & state
-        #def lookup(shop):
-            # Search value should equal form's inputted city
-            # Second search value should contian a state selection from the dropdown menu
-            # Est. connection to db then query for shops where city and state match form inputs
         cursor.execute("SELECT * FROM shops WHERE city=city AND state=state")
         search = cursor.fetchall()
         connection.close()
-        # If city textbox input value is empty or if city matches none of the citys in db,
-        # Then return an error stating "please enter a valid city"
-        # Else return rendered searched template with lookup city & state values passed in
-    # When form submitted via POST
         return render_template("searched.html", search=search)
 
         

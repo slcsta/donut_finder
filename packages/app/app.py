@@ -44,8 +44,5 @@ def search():
     # When form submitted via POST
         return render_template("searched.html", search=search)
 
-    else:
-        return render_template("searched.html", search=search)
-
         
 

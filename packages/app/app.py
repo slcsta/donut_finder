@@ -28,9 +28,7 @@ def search():
     if request.method == "POST":
         connection = db_connect()
         cursor = connection.cursor()
-        city = request.form.get("city")
-        state = request.form.get("state")
-        cursor.execute("SELECT * FROM shops WHERE city=city AND state=state")
+        cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.form.get("city"), request.form.get("state")))
         search = cursor.fetchall()
         connection.close()
         return render_template("searched.html", search=search)

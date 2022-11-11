@@ -28,7 +28,7 @@ def search():
     if request.method == "POST":
 
         if not request.form.get("city"):
-            return error("Please enter a valid city", 403)
+            print("Please enter a valid city")
 
         connection = db_connect()
         cursor = connection.cursor()
@@ -36,7 +36,7 @@ def search():
         search = cursor.fetchall()
         connection.close()
         if search == None:
-            return error("Please enter a valid city", 403)
+            print("Please enter a valid city")
         
         return render_template("searched.html", search=search)
 

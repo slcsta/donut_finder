@@ -26,11 +26,18 @@ def index():
 @app.route("/search", methods=["GET", "POST"])
 def search():
     if request.method == "POST":
+
+        if not request.form.get("city"):
+            return error("Please enter a valid city", 403)
+
         connection = db_connect()
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.form.get("city"), request.form.get("state")))
         search = cursor.fetchall()
         connection.close()
+        if search == None:
+            return error("Please enter a valid city", 403)
+        
         return render_template("searched.html", search=search)
 
         

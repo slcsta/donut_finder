@@ -21,15 +21,16 @@ def index():
 # Submit user's input via POST to /search
 @app.route("/search", methods=["GET", "POST"])
 def search():
-    # TODO Call a lookup func that searches donut shops by city & state
-        # Search value should equal form's inputted city
-        # Second search value should contian a state selection from the dropdown menu
+    # TODO Lookup func that searches donut shops by city & state
+        def lookup(shop):
+            # Search value should equal form's inputted city
+            # Second search value should contian a state selection from the dropdown menu
+            # Est. connection to db then query for shops where city and state match form inputs
+            search = db.execute(SELECT * FROM shops WHERE city=request.form.get("city") AND state=request.form.get("state"))
         # If city textbox input value is empty or if city matches none of the citys in db,
         # Then return an error stating "please enter a valid city"
         # Else return rendered searched template with lookup city & state values passed in
-    
-
-
+    # When form submitted via POST
     if request.method == "POST":
         city = request.form.get("city")
         state = request.form.get("state")

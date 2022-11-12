@@ -68,5 +68,5 @@ class IndexForm(FlaskForm):
         ('Wyoming', 'WY'),
     ]
 )
-recaptcha = RecaptchaField()
+
 submit = SubmitField('Submit')

@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 import sqlite3 as sql
 from sqlite3 import Error
+from .forms import IndexForm
 
 # Configure application
 app = Flask(__name__)
@@ -25,11 +26,8 @@ def index():
 # Submit user's input via POST to /search
 @app.route("/search", methods=["GET", "POST"])
 def search():
-    if request.method == "POST":
-
-        if not request.form.get("city"):
-            print("Please enter a valid city")
-
+    form = IndexForm()
+    if form.validate_on_submit():
         connection = db_connect()
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.form.get("city"), request.form.get("state")))
@@ -39,6 +37,18 @@ def search():
             print("Please enter a valid city")
         
         return render_template("searched.html", search=search)
+        return redirect(url_for("success"))
+    return render_template(
+        "searched.html",
+        form=form,
+        template="form-demplate"
+    )
+    #if request.method == "POST":
+
+        #if not request.form.get("city"):
+            #print("Please enter a valid city")
+
+        
 
         
 

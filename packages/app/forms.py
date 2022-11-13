@@ -13,7 +13,7 @@ class SearchForm(FlaskForm):
     )
     
     state = SelectField(
-        'State'
+        'State',
         [DataRequired()],
         choices=[
         ('Alabama', 'AL'),

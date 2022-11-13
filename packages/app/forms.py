@@ -1,20 +1,19 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import Form, StringField, SelectField, SubmitField
+from wtforms.validators import InputRequired
 
 # https://hackersandslackers.com/flask-wtforms-forms/
 
 
-class SearchForm(FlaskForm):
+class SearchForm(Form):
     """Index form for search donut shops by city & state"""  
     city = StringField(
         'City',
-        [DataRequired()]
+        [InputRequired()]
     )
     
     state = SelectField(
         'State',
-        [DataRequired()],
+        [InputRequired()],
         choices=[
         ('Alabama', 'AL'),
         ('Alaska', 'AK'),

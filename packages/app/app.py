@@ -6,6 +6,7 @@ from forms import SearchForm
 # Configure application
 app = Flask(__name__)
 
+
 # TODO Create a connect to db function here
 def db_connect():
     connection = sql.connect("donut_shops.db")
@@ -19,9 +20,6 @@ def index():
     search = SearchForm(request.form)
     if request.method == "POST":
         return search_results(search)
-        
-        #return rendertemplate('index.html', form=search)
-
     
     else:
         connection = db_connect()

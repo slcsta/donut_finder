@@ -21,6 +21,8 @@ def index():
     if request.method == "POST":
         return search_results(search)
 
+    return rendertemplate('index.html', form=search)
+
     
     else:
         connection = db_connect()
@@ -29,12 +31,10 @@ def index():
         connection.close()
         return render_template("index.html", shops=shops)
 
-
-
 # Displays all db entries on searched.html matching city & state inputs
 # Submit user's input via POST to /search
-@app.route("/search")
-def search():
+@app.route("/results")
+def search_results(search):
     form = IndexForm()
     if form.validate_on_submit():
         connection = db_connect()
@@ -45,12 +45,12 @@ def search():
         if search == None:
             print("Please enter a valid city")
         
-        return render_template("searched.html", search=search)
+        return render_template("results.html", results=results)
         return redirect(url_for("success"))
     return render_template(
-        "searched.html",
+        "results.html",
         form=form,
-        template="form-demplate"
+        template="form-template"
     )
     #if request.method == "POST":
 

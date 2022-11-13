@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3 as sql
 from sqlite3 import Error
-from .forms import SearchForm
+from forms import SearchForm
 
 # Configure application
 app = Flask(__name__)
@@ -16,12 +16,11 @@ def db_connect():
 # GET request handling the db query for all donut shops
 @app.route("/", methods=["GET", "POST"])
 def index():
-
     search = SearchForm(request.form)
     if request.method == "POST":
         return search_results(search)
-
-    return rendertemplate('index.html', form=search)
+        
+        #return rendertemplate('index.html', form=search)
 
     
     else:
@@ -29,7 +28,7 @@ def index():
         cursor = connection.cursor()
         shops = cursor.execute("SELECT * FROM shops").fetchall()
         connection.close()
-        return render_template("index.html", shops=shops)
+        return render_template("index.html", shops=shops, form=search)
 
 # Displays all db entries on searched.html matching city & state inputs
 # Submit user's input via POST to /search

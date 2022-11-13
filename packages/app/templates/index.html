@@ -12,18 +12,21 @@
         <div class="container">
             <div class="section">  
                 <h2>Search Donut Shops</h2>
-                {% block body %}
-                    <form action="/search" method="post">
-                        <input autocomplete="off" autofocus name="city" placeholder="City" type="text">
+                {% from "_formhelpers.html" import render_field %}
+                    <form method="post">
+                                              
+                        <dl>
+                            {{ render_field(form.city) }} {{ render_field(form.state) }}
+                            </dl>
+                        <p><input type="submit" value="Search">
+                    </p></form>
+                        <!-- <input autocomplete="off" autofocus name="city" placeholder="City" type="text">
                         <select name="state" placeholder="State" method="GET" action="/">
                         {% for state in states %}
                             <option value="{{state}}" SELECTED>{{states}}</option>
                         {% endfor %}
                         </select>
-                        <input autocomplete=""off" autofocus name="state" placeholder="State" type="text">
-                        <input type="submit" value="Search">
-                    </form>
-                {% endblock %}
+                        <input autocomplete="off" autofocus name="state" placeholder="State" type="text"> -->
             </div>
             <div class="section">
                 <h2>All Donut Shops</h2>

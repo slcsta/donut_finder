@@ -27,6 +27,10 @@ def index():
         cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.form.get("city"), request.form.get("state")))
         search = cursor.fetchall()
         connection.close()
+        for s in search:
+            city = s["city"]
+            print(city)
+
         return render_template("results.html", search=search, form=search)
     # if request.method == "POST":
         # Validate that post form is successfully submitted

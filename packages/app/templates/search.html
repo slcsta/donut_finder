@@ -1,0 +1,32 @@
+{% block title %}
+    Search Results
+{% endblock%}
+    
+<div class="section">
+    <h2>All Donut Shops</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Rating</th>
+                <th>Address</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in search %}
+            <tr>
+                <td>{{ s["name"] }}</td>
+                <td>{{ s["rating"] }}</td>
+                <td>{{ s["address"] }}, {{ s["address2"] }}</td>
+                <td>{{ s["city"] }}, {{ s["state"] }}</td>
+                <td>{{ s["zip_code"] }}</td>
+                <td>{{ s["phone"] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+</body>
+</html>

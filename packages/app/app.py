@@ -25,9 +25,9 @@ def index():
     connection = db_connect()
     cursor = connection.cursor()
         
-    que = request.args.get('q')
+    que = request.args.get('city', 'state')
 
-    if q:
+    if que:
         cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.form.get("city"), request.form.get("state")))
         results = cursor.fetchall()
         connection.close()

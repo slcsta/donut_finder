@@ -14,14 +14,14 @@
             </tr>
         </thead>
         <tbody>
-            {% for s in search %}
+            {% for result in results %}
             <tr>
-                <td>{{ s["name"] }}</td>
-                <td>{{ s["rating"] }}</td>
-                <td>{{ s["address"] }}, {{ s["address2"] }}</td>
-                <td>{{ s["city"] }}, {{ s["state"] }}</td>
-                <td>{{ s["zip_code"] }}</td>
-                <td>{{ s["phone"] }}</td>
+                <td>{{ result["name"] }}</td>
+                <td>{{ result["rating"] }}</td>
+                <td>{{ result["address"] }}, {{ s["address2"] }}</td>
+                <td>{{ result["city"] }}, {{ s["state"] }}</td>
+                <td>{{ result["zip_code"] }}</td>
+                <td>{{ result["phone"] }}</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -24,18 +24,22 @@ def index():
     #if search:
     connection = db_connect()
     cursor = connection.cursor()
-        
-    que = request.args.get('city', 'state')
-
-    if que:
-        cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.form.get("city"), request.form.get("state")))
+    city = request.args.get('city')
+    state = request.args.get('state')
+    
+    if city and state:
+        cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.args.get("city"), request.args.get("state")))
         results = cursor.fetchall()
-        connection.close()
         return render_template("search.html", results=results)
 
+    else:
+        shops = cursor.execute("SELECT * FROM shops").fetchall()
+        connection.close()
+        return render_template("index.html", shops=shops, form=search)
 
-    elif not que:
-        return redirect(url_for('index'))
+
+    # elif not que:
+    #     return redirect(url_for('index'))
 
     # if request.method == "POST":
         # Validate that post form is successfully submitted
@@ -45,12 +49,12 @@ def index():
         #     print(search)
         #     return search 
     
-    else:
-        connection = db_connect()
-        cursor = connection.cursor()
-        shops = cursor.execute("SELECT * FROM shops").fetchall()
-        connection.close()
-        return render_template("index.html", shops=shops, form=search)
+    # else:
+    #     connection = db_connect()
+    #     cursor = connection.cursor()
+    #     shops = cursor.execute("SELECT * FROM shops").fetchall()
+    #     connection.close()
+    #     return render_template("index.html", shops=shops, form=search)
 
 # Displays db entries on results.html that match city & state inputs
 # @app.route("/results")

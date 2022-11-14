@@ -18,20 +18,23 @@ def db_connect():
 # GET request handling the db query for all donut shops
 # '/' takes query params of city and state and then re
 #@app.route("/", methods=["GET", "POST"])
-@app.route("/")
+@app.route("/", methods=['GET'])
 def index():
-    search = SearchForm(request.form)
-    if search:
-        connection = db_connect()
-        cursor = connection.cursor()
-        cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.form.get("city"), request.form.get("state")))
-        search = cursor.fetchall()
-        connection.close()
-        for s in search:
-            city = s["city"]
-            print(city)
+    #search = SearchForm(request.form)
+    #if search:
+    connection = db_connect()
+    cursor = connection.cursor()
+        
+    que = request.args.get('q')
 
-        return render_template("results.html", search=search, form=search)
+    if not que:
+        return redirect(url_for('index'))
+
+    elif que:
+        cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.form.get("city"), request.form.get("state")))
+        results = cursor.fetchall()
+        connection.close()
+        return render_template("search.html", results=results)
     # if request.method == "POST":
         # Validate that post form is successfully submitted
         # Return submitted input fields

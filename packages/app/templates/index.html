@@ -14,13 +14,16 @@
                 <h2>Search Donut Shops</h2>
                 {% from "_formhelpers.html" import render_field %}
                     <form method="GET">
-                        <dl>
-                            {{ render_field(form.city) }} {{ render_field(form.state) }}
-                        </dl>
-                        <p><input type="submit" value="Search">
+                        <td>
+                            <input autocomplete="off" autofocus name="city" placeholder="City" type="text">
+                            {{ render_field(form.city) }} 
+                            <select name="state" placeholder="State" method="GET" action="/"></select>
+                            {{ render_field(form.state) }}
+                        </td>
+                        <p><input type="search" value="Search">
                     </p></form>
-                        <!-- <input autocomplete="off" autofocus name="city" placeholder="City" type="text">
-                        <select name="state" placeholder="State" method="GET" action="/">
+                        <!-- 
+                        
                         {% for state in states %}
                             <option value="{{state}}" SELECTED>{{states}}</option>
                         {% endfor %}

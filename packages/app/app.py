@@ -20,7 +20,7 @@ def db_connect():
 #@app.route("/", methods=["GET", "POST"])
 @app.route("/")
 def index():
-  search = SearchForm(request.form)
+    search = SearchForm(request.form)
     if search:
         connection = db_connect()
         cursor = connection.cursor()

@@ -16,10 +16,13 @@ def db_connect():
 
 # Displays all db entries on index.html
 # GET request handling the db query for all donut shops
-@app.route("/", methods=["GET", "POST"])
+# '/' takes query params of city and state and then re
+#@app.route("/", methods=["GET", "POST"])
+@app.route("/")
 def index():
-    search = SearchForm(request.form)
-    if request.method == "POST":
+  search = SearchForm(request.form)
+    if search:
+    # if request.method == "POST":
         # Validate that post form is successfully submitted
         # Return submitted input fields
         # Redirect to "/results" url

@@ -23,9 +23,9 @@ def index():
         # Validate that post form is successfully submitted
         # Return submitted input fields
         # Redirect to "/results" url
-        if form.validate():
-        print(search)
-        return search 
+        if search.validate():
+            print(search)
+            return search 
     
     else:
         connection = db_connect()
@@ -38,14 +38,14 @@ def index():
 @app.route("/results")
 def search_results(search):
     form = SearchForm()
-        connection = db_connect()
-        cursor = connection.cursor()
-        cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.form.get("city"), request.form.get("state")))
-        search = cursor.fetchall()
-        connection.close()
+    connection = db_connect()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.form.get("city"), request.form.get("state")))
+    search = cursor.fetchall()
+    connection.close()
         
-        if search == None:
-            print("Please enter a valid city")
+    if search == None:
+        print("Please enter a valid city")
 
     return render_template(
         "results.html",

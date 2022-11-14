@@ -27,14 +27,16 @@ def index():
         
     que = request.args.get('q')
 
-    if not que:
-        return redirect(url_for('index'))
-
-    elif que:
+    if q:
         cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.form.get("city"), request.form.get("state")))
         results = cursor.fetchall()
         connection.close()
         return render_template("search.html", results=results)
+
+
+    elif not que:
+        return redirect(url_for('index'))
+
     # if request.method == "POST":
         # Validate that post form is successfully submitted
         # Return submitted input fields

@@ -20,7 +20,9 @@ def db_connect():
 def index():
     search = SearchForm(request.form)
     if request.method == "POST":
-        return search_results(search)
+        # Validate that post form is successfully submitted
+        # Return submitted input fields
+        return search 
     
     else:
         connection = db_connect()
@@ -30,11 +32,10 @@ def index():
         return render_template("index.html", shops=shops, form=search)
 
 # Displays all db entries on searched.html matching city & state inputs
-# Submit user's input via POST to /search
 @app.route("/results")
 def search_results(search):
-    form = IndexForm()
-    if form.validate_on_submit():
+    form = SearchForm()
+    if form.validate():
         connection = db_connect()
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.form.get("city"), request.form.get("state")))

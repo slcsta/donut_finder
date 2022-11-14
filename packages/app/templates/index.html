@@ -14,10 +14,10 @@
                 <h2>Search Donut Shops</h2>
                 {% from "_formhelpers.html" import render_field %}
                     <form method="post">
-                                              
+                      
                         <dl>
                             {{ render_field(form.city) }} {{ render_field(form.state) }}
-                            </dl>
+                        </dl>
                         <p><input type="submit" value="Search">
                     </p></form>
                         <!-- <input autocomplete="off" autofocus name="city" placeholder="City" type="text">

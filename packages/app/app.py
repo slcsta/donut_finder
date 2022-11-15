@@ -7,7 +7,7 @@ from forms import SearchForm
 # Configure application
 app = Flask(__name__)
 
-# Connect to db function here
+# Connect to db function
 def db_connect():
     connection = sql.connect("donut_shops.db")
     connection.row_factory = sql.Row
@@ -24,6 +24,8 @@ def index():
     
     if city and state:
         cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.args.get("city"), request.args.get("state")))
+        if city == None:
+            print("search matches nothing")
         results = cursor.fetchall()
         return render_template("search.html", results=results)
 

@@ -7,7 +7,6 @@ from forms import SearchForm
 # Configure application
 app = Flask(__name__)
 
-
 # Connect to db function here
 def db_connect():
     connection = sql.connect("donut_shops.db")
@@ -15,8 +14,7 @@ def db_connect():
     return connection
 
 # Displays all db entries on index.html
-# GET request handling the db query for all donut shops
-# Conditionally render db query for donut shops by city & state
+# Conditionally renders donut shops by city & state on search.html
 @app.route("/", methods=['GET'])
 def index():
     connection = db_connect()

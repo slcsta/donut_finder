@@ -26,16 +26,17 @@ def index():
     cursor = connection.cursor()
     city = request.args.get('city')
     state = request.args.get('state')
+    print(state)
     
     if city and state:
         cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.args.get("city"), request.args.get("state")))
-        results = cursor.fetchall()
+        shops = cursor.fetchall()
         return render_template("search.html", results=results)
 
     else:
         shops = cursor.execute("SELECT * FROM shops").fetchall()
         connection.close()
-        return render_template("index.html", shops=shops, form=search)
+        return render_template("index.html", shops=shops)
 
 
     # elif not que:

@@ -3,6 +3,7 @@ import sqlite3 as sql
 from sqlite3 import Error
 from forms import SearchForm
 # from flask_wtf.csrf import CSRFProtect
+from helpers import apology
 
 # Configure application
 app = Flask(__name__)
@@ -24,9 +25,9 @@ def index():
     
     if city and state:
         cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.args.get("city"), request.args.get("state")))
-        if city == None:
-            print("search matches nothing")
         results = cursor.fetchall()
+        if len(results) == 0:
+            return apology("No matches for your search criteria", 403)
         return render_template("search.html", results=results)
 
     else:

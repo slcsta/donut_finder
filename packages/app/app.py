@@ -26,6 +26,7 @@ def index():
     if city and state:
         cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.args.get("city"), request.args.get("state")))
         results = cursor.fetchall()
+        connection.close()
         if len(results) == 0:
             return apology("No matches for your search criteria", 403)
         return render_template("search.html", results=results)

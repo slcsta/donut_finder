@@ -2,8 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 import sqlite3 as sql
 from sqlite3 import Error
 from forms import SearchForm
-# from flask_wtf.csrf import CSRFProtect
-from helpers import apology
+
 
 # Configure application
 app = Flask(__name__)
@@ -32,16 +31,18 @@ def index():
     city = request.args.get('city')
     state = request.args.get('state')
     
+    # Case: city and state are provided by user and available to use.
     if city and state:
-        cursor.execute("SELECT * FROM shops WHERE city=? COLLATE NOCASE AND state=? COLLATE NOCASE", (request.args.get("city"), request.args.get("state")))
+        cursor.execute("SELECT * FROM shops WHERE city=? COLLATE NOCASE AND state=? COLLATE NOCASE", (city, state))
         table_title = "Donut Shop Search Results"
         shops = cursor.fetchall()
         connection.close()
         
         if len(shops) == 0:
-            return render_template("apology.html", message="No Matches - Please Try Again,", states=STATES, code=403)
-        return render_template("index.html", shops=shops, table_title=table_title, states=STATES)
+            return render_template("apology.html", message="No Matches - Please Try Again,", states=STATES, code=403, selected_city=city, selected_state=state)
+        return render_template("index.html", shops=shops, table_title=table_title, states=STATES, selected_city=city, selected_state=state)
 
+    # Case: city and state are undefined, first time visit to page.
     else:
         table_title = "All Donut Shops"
         shops = cursor.execute("SELECT * FROM shops").fetchall()

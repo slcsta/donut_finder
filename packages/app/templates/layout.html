@@ -14,7 +14,9 @@
                 <h2>Search for Donut Shops</h2>
                 <form  class="form-inline" method="GET">
                     <td>
+                        <!-- TODO: ensure city is displayed if available -->
                         <input autocomplete="off" autofocus name="city" placeholder="City" type="text" required />
+                        <!-- TODO: ensure state is displayed if available -->
                         <select name="state" required> 
                             <option value="" selected>State</option>
                             {% for state in states %}

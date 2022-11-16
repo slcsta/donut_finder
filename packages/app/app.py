@@ -39,8 +39,7 @@ def index():
         connection.close()
         
         if len(shops) == 0:
-            # TODO: ensure apology does not trap user
-            return apology("No Matches - Please Try Again,", STATES,  403)
+            return render_template("apology.html", message="No Matches - Please Try Again,", states=STATES, code=403)
         return render_template("index.html", shops=shops, table_title=table_title, states=STATES)
 
     else:

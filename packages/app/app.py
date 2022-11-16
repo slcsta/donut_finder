@@ -38,9 +38,9 @@ def index():
         
         if len(results) == 0:
             return apology("No matches for your search criteria", 403)
-        return render_template("search.html", results=results)
+        return render_template("search.html", results=results, states=states)
 
     else:
         shops = cursor.execute("SELECT * FROM shops").fetchall()
         connection.close()
-        return render_template("index.html", shops=shops)
+        return render_template("index.html", shops=shops, states=states)

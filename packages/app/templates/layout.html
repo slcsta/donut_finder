@@ -12,19 +12,17 @@
         <div class="container">
             <div class="section">  
                 <h2>Search for Donut Shops</h2>
-                
                     <form  class="form-inline" method="GET">
                         <td>
-                        <input autocomplete="off" autofocus name="city" placeholder="City" type="text" required>  
-                        <input autocomplete="off" autofocus name="state" placeholder="State" type="text" required>
+                        <input autocomplete="off" autofocus name="city" placeholder="City" type="text" required> 
+                        <select name="state"> 
+                            {% for state in states %}
+                                <option value={{ state[0] }}>{{ state[1] }}</option>
+                            {% endfor %}
+                        </select>
                         </td>
                         <input type="submit" value="Search">
                     </form>
-                    <select>  
-                        {% for state in states %}
-                            <option value="{{state}}" SELECTED>{{states}}</option>
-                        {% endfor %}
-                    </select>  
                     <main class="container-fluid py-5 text-center">
                         {% block main %}{% endblock %}
                     </main>

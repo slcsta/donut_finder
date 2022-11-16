@@ -15,10 +15,12 @@
                     <form  class="form-inline" method="GET">
                         <td>
                         <input autocomplete="off" autofocus name="city" placeholder="City" type="text" required> 
-                        <select name="state"> 
+                        <select name="state" required> 
+                            <option value="" selected>State</option>
                             {% for state in states %}
-                                <option value={{ state[0] }} SELECTED>{{ state[1] }}</option>
+                            <option value={{ state[0] }}>{{ state[1] }}</option>
                             {% endfor %}
+                            
                         </select>
                         </td>
                         <input type="submit" value="Search">

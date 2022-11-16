@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3 as sql
 from sqlite3 import Error
-from forms import SearchForm
-
 
 # Configure application
 app = Flask(__name__)

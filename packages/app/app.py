@@ -37,7 +37,7 @@ def index():
         connection.close()
         
         if len(results) == 0:
-            return apology("No Matches for Submitted Search", 403)
+            return apology("No Matches - Please Try Again,", 403)
         return render_template("search.html", results=results, states=STATES)
 
     else:

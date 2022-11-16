@@ -18,7 +18,7 @@ def db_connect():
 # Conditionally renders donut shops by city & state on search.html
 @app.route("/", methods=['GET'])
 def index():
-    states = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
+    STATES = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
         ('DE', 'Delaware'), ('FL', 'Florida'), ('GA', 'Georgia'), ('HI', 'Hawaii'), ('ID', 'Idaho'), ('IL', 'Illinois'), ('IN', 'Indiana'), ('IA', 'Iowa'),
         ('KS', 'Kansas'), ('KY', 'Kentucky'), ('LA', 'Louisiana'), ('ME', 'Maine'), ('MD', 'Maryland'), ('MA', 'Massachusetts'), ('MI', 'Michigan'), 
         ('MN', 'Minnesota'), ('MS', 'Mississippi'), ('MO', 'Missouri'), ('MT', 'Montana'), ('NE', 'Nebraska'), ('NV', 'Nevada'), ('NH', 'New Hampshire'), 
@@ -32,15 +32,15 @@ def index():
     state = request.args.get('state')
     
     if city and state:
-        cursor.execute("SELECT * FROM shops WHERE city=? AND state=?", (request.args.get("city"), request.args.get("state")))
+        cursor.execute("SELECT * FROM shops WHERE city=? COLLATE NOCASE AND state=? COLLATE NOCASE", (request.args.get("city"), request.args.get("state")))
         results = cursor.fetchall()
         connection.close()
         
         if len(results) == 0:
             return apology("No matches for your search criteria", 403)
-        return render_template("search.html", results=results, states=states)
+        return render_template("search.html", results=results, states=STATES)
 
     else:
         shops = cursor.execute("SELECT * FROM shops").fetchall()
         connection.close()
-        return render_template("index.html", shops=shops, states=states)
+        return render_template("index.html", shops=shops, states=STATES)

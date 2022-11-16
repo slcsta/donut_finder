@@ -14,13 +14,12 @@
                 <h2>Search for Donut Shops</h2>
                 <form  class="form-inline" method="GET">
                     <td>
-                        <!-- TODO: ensure city is displayed if available -->
                         {% if selected_city is undefined %}
                         <input autocomplete="off" autofocus name="city" placeholder="City" type="text" required />
                         {% else %}
                         <input autocomplete="off" autofocus name="city" placeholder="City" type="text" value={{ selected_city }} required />
                         {% endif %}
-                        <!-- TODO: ensure state is displayed if available -->
+                        
                         <select name="state" required> 
                             {% if selected_state is undefined %}
                             <option value="" selected>State</option>

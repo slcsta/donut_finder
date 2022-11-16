@@ -16,12 +16,10 @@
                     <td>
                         <input autocomplete="off" autofocus name="city" placeholder="City" type="text" required />
                         <select name="state" required> 
-                            <!-- TODO: Ensure that states remain populated within the apology view -->
                             <option value="" selected>State</option>
                             {% for state in states %}
                             <option value={{ state[0] }}>{{ state[1] }}</option>
                             {% endfor %}
-                            
                         </select>
                     </td>
                     <input type="submit" value="Search" />

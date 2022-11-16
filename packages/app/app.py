@@ -26,6 +26,7 @@ def index():
         ('OR', 'Oregon'), ('PA', 'Pennsylvania'), ('RI', 'Rhode Island'), ('SC', 'South Carolina'), ('SD', 'South Dakota'), ('TN','Tennessee'), ('TX', 'Texas'), 
         ('UT', 'Utah'), ('VT', 'Vermont'), ('VA', 'Virginia'), ('WA', 'Washington'), ('WV', 'West Virginia'), ('WI', 'Wisconsin'), ('WY', 'Wyoming'),
     ]
+    
     connection = db_connect()
     cursor = connection.cursor()
     city = request.args.get('city')
@@ -33,14 +34,16 @@ def index():
     
     if city and state:
         cursor.execute("SELECT * FROM shops WHERE city=? COLLATE NOCASE AND state=? COLLATE NOCASE", (request.args.get("city"), request.args.get("state")))
-        results = cursor.fetchall()
+        table_title = "Donut Shop Search Results"
+        shops = cursor.fetchall()
         connection.close()
         
-        if len(results) == 0:
+        if len(shops) == 0:
             return apology("No Matches - Please Try Again,", 403)
-        return render_template("search.html", results=results, states=STATES)
+        return render_template("index.html", shops=shops, table_title=table_title, states=STATES)
 
     else:
+        table_title = "All Donut Shops"
         shops = cursor.execute("SELECT * FROM shops").fetchall()
         connection.close()
-        return render_template("index.html", shops=shops, states=STATES)
+        return render_template("index.html", shops=shops, table_title=table_title, states=STATES)

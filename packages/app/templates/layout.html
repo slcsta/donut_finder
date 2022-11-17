@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+        <link href="/static/styles.css" rel="stylesheet">
+        <title>Donut Shop Finder</title>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Donut Shop Finder</h1>
+        </div>
+        <div class="container">
+            <div class="section">  
+                <h2>Search for Donut Shops</h2>
+                <form  class="form-inline" method="GET">
+                    <td>
+                        {% if selected_city is undefined %}
+                        <input autocomplete="off" autofocus name="city" placeholder="City" type="text" required />
+                        {% else %}
+                        <input autocomplete="off" autofocus name="city" placeholder="City" type="text" value={{ selected_city }} required />
+                        {% endif %}
+                        <select name="state" required> 
+                            {% if selected_state is undefined %}
+                            <option value="" selected>State</option>
+                            {% endif %}
+                            {% for state in states %}
+                            {% if state[0] == selected_state %}
+                            <option value={{ state[0] }} selected>{{ state[1] }}</option>
+                            {% else %}
+                            <option value={{ state[0] }}>{{ state[1] }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <input type="submit" value="Search" />
+                </form>
+                <main class="container-fluid py-5 text-center">
+                    {% block main %}{% endblock %}
+                </main>
+            </div>
+        </div>
+    </body>
+</html>

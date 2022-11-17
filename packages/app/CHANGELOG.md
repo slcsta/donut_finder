@@ -1,5 +1,12 @@
 # @slcsta/donut-finder
 
+## 0.3.0
+
+### Minor Changes
+
+- aac77a1: Creating filtering components for Donut Shop Finder app including state and city inputs with submit button
+- b74ea18: Create DB schema, retrieve initial dataset, construct table and load data into table, display data/content in table
+
 ## 0.2.0
 
 ### Minor Changes

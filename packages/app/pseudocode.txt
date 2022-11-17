@@ -1,4 +1,4 @@
-In helpers.py create a lookup function to access donunt shops in Yelp API
+Add a search function to access donunt shops in Yelp API
 Lookup function: given a city and state, should return donut shops from Yelp API matching inputted values
 Hide API key in my .env file in gitignore
 Use API key variable to reference actual API key value
@@ -13,7 +13,7 @@ Contact API:
     Parse Response
 
     To dynamically search for donut shops, need POST method
-    In app.py create a function to call lookup function in helpers.py
+    In app.py create a function to call lookup function
     Use search form with city and state inputs to submit a search for donut shops
     If search is unsuccessful,
         return error/apology

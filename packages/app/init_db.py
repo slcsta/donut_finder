@@ -3,9 +3,18 @@ import json
 
 # clean up step to drop the table
 
-# try block to test a block for code errors
-# except block to handle the error
-# else block lets you execute code when there is no error
+# Contact API
+# Try block to test a block for code errors
+# API Key
+# URL
+# Response
+
+# Parse response
+# Try block
+
+# Except block to handle error
+# key errors, type errors, value errors
+# Else block lets you execute code when there is no error
 
 connection = sql.connect('donut_shops.db')
     

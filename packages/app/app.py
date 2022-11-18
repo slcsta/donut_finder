@@ -43,7 +43,7 @@ def db_connect():
 # Conditionally renders donut shops by city & state on search.html
 @app.route("/", methods=['GET'])
 def index():
-    STATES = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
+    states = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
         ('DE', 'Delaware'), ('FL', 'Florida'), ('GA', 'Georgia'), ('HI', 'Hawaii'), ('ID', 'Idaho'), ('IL', 'Illinois'), ('IN', 'Indiana'), ('IA', 'Iowa'),
         ('KS', 'Kansas'), ('KY', 'Kentucky'), ('LA', 'Louisiana'), ('ME', 'Maine'), ('MD', 'Maryland'), ('MA', 'Massachusetts'), ('MI', 'Michigan'), 
         ('MN', 'Minnesota'), ('MS', 'Mississippi'), ('MO', 'Missouri'), ('MT', 'Montana'), ('NE', 'Nebraska'), ('NV', 'Nevada'), ('NH', 'New Hampshire'), 
@@ -65,12 +65,12 @@ def index():
         connection.close()
         
         if len(shops) == 0:
-            return render_template("apology.html", message="No Matches - Please Try Again,", states=STATES, code=403, selected_city=city, selected_state=state)
-        return render_template("index.html", shops=shops, table_title=table_title, states=STATES, selected_city=city, selected_state=state)
+            return render_template("apology.html", message="No Matches - Please Try Again,", states=states, code=403, selected_city=city, selected_state=state)
+        return render_template("index.html", shops=shops, table_title=table_title, states=states, selected_city=city, selected_state=state)
 
     # Case: city and state are undefined, first time visit to page.
     else:
         table_title = "All Donut Shops"
         shops = cursor.execute("SELECT * FROM shops").fetchall()
         connection.close()
-        return render_template("index.html", shops=shops, table_title=table_title, states=STATES)
+        return render_template("index.html", shops=shops, table_title=table_title, states=states)

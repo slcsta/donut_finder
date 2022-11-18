@@ -1,5 +1,6 @@
 import sqlite3 as sql
 import json
+import requests
 
 # clean up step to drop the table
 

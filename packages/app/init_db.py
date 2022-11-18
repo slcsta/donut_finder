@@ -1,21 +1,7 @@
 import sqlite3 as sql
 import json
-import requests
 
 # clean up step to drop the table
-
-# Contact API
-# Try block to test a block for code errors
-# API Key
-# URL
-# Response
-
-# Parse response
-# Try block
-
-# Except block to handle error
-# key errors, type errors, value errors
-# Else block lets you execute code when there is no error
 
 connection = sql.connect('donut_shops.db')
     

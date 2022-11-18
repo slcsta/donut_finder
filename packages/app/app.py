@@ -1,11 +1,39 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3 as sql
 from sqlite3 import Error
+#import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Configure application
 app = Flask(__name__)
 
+# Contact API
+#def lookup(select_city, select_state):
+# Try block to test a block for code errors
+#try:
+# API Key
+API_KEY = os.getenv("API_KEY")
+print(API_KEY)
+#headers = {'Authorization': 'Bearer %s' API_KEY}
+#url = f("https://api.yelp.com/v3/businesses/search?term=donut&location=Seattle, WA")
+#response = requests.get(url, params=params, headers=headers)
+
+# Parse response
+
+# Try block
+
+# Except block to handle error
+# key errors, type errors, value errors
+# Else block lets you execute code when there is no error
+
+# Requesting API will return only first 20 biz
+# To solve, have to create a loop of 50 batches to get up to 1000
+# 1000 is the limit of this endpoint
 # Connect to db function
+
 def db_connect():
     connection = sql.connect("donut_shops.db")
     connection.row_factory = sql.Row

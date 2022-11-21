@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3 as sql
 from sqlite3 import Error
-#import requests
+import requests
+import json
 import os
 from dotenv import load_dotenv
 
@@ -10,30 +11,36 @@ load_dotenv()
 # Configure application
 app = Flask(__name__)
 
-# Contact API
-#def lookup(select_city, select_state):
-# Try block to test a block for code errors
-#try:
-# API Key
-API_KEY = os.getenv("API_KEY")
-print(API_KEY)
-#headers = {'Authorization': 'Bearer %s' API_KEY}
-#url = f("https://api.yelp.com/v3/businesses/search?term=donut&location=Seattle, WA")
-#response = requests.get(url, params=params, headers=headers)
+def yelp_lookup(city, state):
+    #city = "New York"
+    #state = "NY"
+
+    # Contact API
+    #try:
+    API_KEY = os.getenv("API_KEY")
+    headers = {"Authorization": "Bearer {0}".format(API_KEY)}
+    url = ("https://api.yelp.com/v3/businesses/search?term=donut&location={city},{state}")
+    #params = {"term": "donut", "location":{city, state}}
+        
+    # Get request to the API
+    response = requests.get(url, headers=headers)
+
+    # Check status code
+    print("status code {}".format(response.status_code))
+
+    # Print response
+    json.loads(response.text)
+    return None
 
 # Parse response
-
-# Try block
-
-# Except block to handle error
 # key errors, type errors, value errors
 # Else block lets you execute code when there is no error
 
 # Requesting API will return only first 20 biz
-# To solve, have to create a loop of 50 batches to get up to 1000
+# To retrieve more, create a loop of 50 batches to get up to 1000
 # 1000 is the limit of this endpoint
-# Connect to db function
 
+# Connect to db
 def db_connect():
     connection = sql.connect("donut_shops.db")
     connection.row_factory = sql.Row
@@ -49,7 +56,7 @@ def index():
         ('MN', 'Minnesota'), ('MS', 'Mississippi'), ('MO', 'Missouri'), ('MT', 'Montana'), ('NE', 'Nebraska'), ('NV', 'Nevada'), ('NH', 'New Hampshire'), 
         ('NJ', 'New Jersey'), ('NM', 'New Mexico'), ('NY', 'New York'), ('NC', 'North Carolina'), ('ND', 'North Dakota'), ('OH', 'Ohio'), ('OK', 'Oklahoma'), 
         ('OR', 'Oregon'), ('PA', 'Pennsylvania'), ('RI', 'Rhode Island'), ('SC', 'South Carolina'), ('SD', 'South Dakota'), ('TN','Tennessee'), ('TX', 'Texas'), 
-        ('UT', 'Utah'), ('VT', 'Vermont'), ('VA', 'Virginia'), ('WA', 'Washington'), ('WV', 'West Virginia'), ('WI', 'Wisconsin'), ('WY', 'Wyoming'),
+        ('UT', 'Utah'), ('VT', 'Vermont'), ('VA', 'Virginia'), ('WA', 'Washington'), ('WV', 'West Virginia'), ('WI', 'Wisconsin'), ('WY', 'Wyoming')
     ]
     
     connection = db_connect()
@@ -59,14 +66,15 @@ def index():
     
     # Case: city and state are provided by user and available to use.
     if city and state:
-        cursor.execute("SELECT * FROM shops WHERE city=? COLLATE NOCASE AND state=? COLLATE NOCASE", (city, state))
-        table_title = "Donut Shop Search Results"
-        shops = cursor.fetchall()
-        connection.close()
+        shops = yelp_lookup(city, state)
+        #cursor.execute("SELECT * FROM shops WHERE city=? COLLATE NOCASE AND state=? COLLATE NOCASE", (city, state))
+        #table_title = "Donut Shop Search Results"
+        #shops = cursor.fetchall()
+        #connection.close()
         
-        if len(shops) == 0:
-            return render_template("apology.html", message="No Matches - Please Try Again,", states=states, code=403, selected_city=city, selected_state=state)
-        return render_template("index.html", shops=shops, table_title=table_title, states=states, selected_city=city, selected_state=state)
+        #if len(shops) == 0:
+            #return render_template("apology.html", message="No Matches - Please Try Again,", states=states, code=403, selected_city=city, selected_state=state)
+        #return render_template("index.html", shops=shops, table_title=table_title, states=states, selected_city=city, selected_state=state)
 
     # Case: city and state are undefined, first time visit to page.
     else:

@@ -25,7 +25,7 @@ url = 'https://api.yelp.com/v3/businesses/search'
 params = {'term': 'donut', 'location': '{}, {}'.format(str(city), str(state))}
         
 # Get request to the API
-response = requests.get(url, headers=headers)
+response = requests.get(url, params=params, headers=headers)
 
 # Check status code
 print("status code {}".format(response.status_code))

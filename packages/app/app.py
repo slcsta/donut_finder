@@ -16,7 +16,8 @@ app = Flask(__name__)
 
 # Trigger scheduler 
 if __name__ == '__main__':
-    scheduler.add_job()
+    scheduler.add_job(id = 'scheduled task', func = scheduledTask, trigger = 'interval', minutes = 5)
+    scheduler.start()
 
 # Contact API
 API_KEY = os.getenv('API_KEY')

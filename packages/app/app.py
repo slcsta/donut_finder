@@ -5,40 +5,35 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
+from datetime import datetime
+import time
+from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
 # Configure application
 app = Flask(__name__)
 
-def yelp_lookup(city, state):
-    #city = "New York"
-    #state = "NY"
+# Trigger scheduler 
+if __name__ == '__main__':
+    scheduler.add_job()
 
-    # Contact API
-    #try:
-    API_KEY = os.getenv("API_KEY")
-    headers = {"Authorization": "Bearer {0}".format(API_KEY)}
-    url = ("https://api.yelp.com/v3/businesses/search?term=donut&location={city},{state}")
-    #params = {"term": "donut", "location":{city, state}}
+# Contact API
+API_KEY = os.getenv("API_KEY")
+headers = {"Authorization": "Bearer {0}".format(API_KEY)}
+url = ("https://api.yelp.com/v3/businesses/search")
+params = {"term": "donut", "location": "{}, {}".format(str(city), str(state))}
         
-    # Get request to the API
-    response = requests.get(url, headers=headers)
+# Get request to the API
+response = requests.get(url, headers=headers)
 
-    # Check status code
-    print("status code {}".format(response.status_code))
+# Check status code
+print("status code {}".format(response.status_code))
 
-    # Print response
-    json.loads(response.text)
-    return None
-
-# Parse response
-# key errors, type errors, value errors
-# Else block lets you execute code when there is no error
-
-# Requesting API will return only first 20 biz
-# To retrieve more, create a loop of 50 batches to get up to 1000
-# 1000 is the limit of this endpoint
+# Print response
+data = json.loads(response.text)
+print(data)
+return None
 
 # Connect to db
 def db_connect():
@@ -66,15 +61,14 @@ def index():
     
     # Case: city and state are provided by user and available to use.
     if city and state:
-        shops = yelp_lookup(city, state)
-        #cursor.execute("SELECT * FROM shops WHERE city=? COLLATE NOCASE AND state=? COLLATE NOCASE", (city, state))
-        #table_title = "Donut Shop Search Results"
-        #shops = cursor.fetchall()
-        #connection.close()
+        cursor.execute("SELECT * FROM shops WHERE city=? COLLATE NOCASE AND state=? COLLATE NOCASE", (city, state))
+        table_title = "Donut Shop Search Results"
+        shops = cursor.fetchall()
+        connection.close()
         
-        #if len(shops) == 0:
-            #return render_template("apology.html", message="No Matches - Please Try Again,", states=states, code=403, selected_city=city, selected_state=state)
-        #return render_template("index.html", shops=shops, table_title=table_title, states=states, selected_city=city, selected_state=state)
+        if len(shops) == 0:
+            return render_template("apology.html", message="No Matches - Please Try Again,", states=states, code=403, selected_city=city, selected_state=state)
+        return render_template("index.html", shops=shops, table_title=table_title, states=states, selected_city=city, selected_state=state)
 
     # Case: city and state are undefined, first time visit to page.
     else:

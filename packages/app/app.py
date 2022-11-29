@@ -14,30 +14,30 @@ load_dotenv()
 # Configure application
 app = Flask(__name__)
 
-def scheduledTask():
+def scheduled_task():
     print("This task is up and running")
 
 # Start scheduler 
 if __name__ == '__main__':
-    scheduler.add_job(id = 'scheduled task', func = scheduledTask, trigger = 'interval', seconds = 5)
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(scheduled_task, 'interval', seconds = 5)
     scheduler.start()
 
 # Contact API
-API_KEY = os.getenv('API_KEY')
-headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
-url = 'https://api.yelp.com/v3/businesses/search'
-params = {'term': 'donut', 'location': '{}, {}'.format(str(city), str(state))}
+# API_KEY = os.getenv('API_KEY')
+# headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
+# url = 'https://api.yelp.com/v3/businesses/search'
+# params = {'term': 'donut', 'location': '{}, {}'.format(str(city), str(state))}
         
 # Get request to the API
-response = requests.get(url, params=params, headers=headers)
+# response = requests.get(url, params=params, headers=headers)
 
 # Check status code
-print("status code {}".format(response.status_code))
+# print("status code {}".format(response.status_code))
 
 # Print response
-data = json.loads(response.text)
-print(data)
-return None
+# data = json.loads(response.text)
+# print(data)
 
 # Connect to db
 def db_connect():

@@ -14,9 +14,12 @@ load_dotenv()
 # Configure application
 app = Flask(__name__)
 
-# Trigger scheduler 
+def scheduledTask():
+    print("This task is up and running")
+
+# Start scheduler 
 if __name__ == '__main__':
-    scheduler.add_job(id = 'scheduled task', func = scheduledTask, trigger = 'interval', minutes = 5)
+    scheduler.add_job(id = 'scheduled task', func = scheduledTask, trigger = 'interval', seconds = 5)
     scheduler.start()
 
 # Contact API

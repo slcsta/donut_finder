@@ -19,10 +19,10 @@ if __name__ == '__main__':
     scheduler.add_job()
 
 # Contact API
-API_KEY = os.getenv("API_KEY")
-headers = {"Authorization": "Bearer {0}".format(API_KEY)}
-url = ("https://api.yelp.com/v3/businesses/search")
-params = {"term": "donut", "location": "{}, {}".format(str(city), str(state))}
+API_KEY = os.getenv('API_KEY')
+headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
+url = 'https://api.yelp.com/v3/businesses/search'
+params = {'term': 'donut', 'location': '{}, {}'.format(str(city), str(state))}
         
 # Get request to the API
 response = requests.get(url, headers=headers)

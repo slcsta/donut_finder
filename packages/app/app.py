@@ -11,14 +11,16 @@ load_dotenv()
 # Configure application
 app = Flask(__name__)
 
-def scheduled_task():
-    print("This task is up and running")
-
 # Start scheduler 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
-    scheduler.add_job(scheduled_task, 'interval', seconds=1)
+    scheduler.add_job(scheduled_task, 'interval', seconds=10)
     scheduler.start()
+
+# Define jobs
+def scheduled_task():
+    ''' Job will go here '''
+    print("This task is up and running")
 
 # Need some trigger to keep scheduler on task until stopped
 
@@ -40,6 +42,11 @@ print("status code {}".format(response.status_code))
 # Print response
 data = json.loads(response.text)
 pprint(data)
+
+# Parse data
+shops = data['businesses']
+for shop in shops:
+
 
 # Connect to db
 def db_connect():

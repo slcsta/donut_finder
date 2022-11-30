@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3 as sql
-import requests, json, os, time
+import requests, json, os, time, logging
 from time import sleep
 from dotenv import load_dotenv
 from datetime import datetime
@@ -13,19 +13,20 @@ load_dotenv()
 app = Flask(__name__)
 
 scheduler = BackgroundScheduler()
+logging.basicConfig()
+logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
 # TODO Define jobs
 def fetch_yelp_data():
     ''' Job will go here '''
     print("This task is up and running")
 
-# Main runs a while loop and sleeps indefinitely
+# Main runs a while loop and sleeps indefinitely "in the background" - parallel to flask app
 def main():
     scheduler.add_job(fetch_yelp_data, 'interval', seconds=5)
     scheduler.start()
 
     try:
-        # This is here to simulate application activity (which keeps the main thread alive).
         while True:
             time.sleep(2)
     except (KeyboardInterrupt, SystemExit):
@@ -37,6 +38,7 @@ if __name__ == '__main__':
     main()
 
 # TODO Need to log jobs and print out to terminal 
+# TODO Need to handle missed job executions, errors that happen w/scheduled jobs
 
 # Contact API
 API_KEY = os.getenv('API_KEY')

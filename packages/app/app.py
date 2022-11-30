@@ -20,25 +20,28 @@ def scheduled_task():
 # Start scheduler 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
-    scheduler.add_job(scheduled_task, 'interval', seconds=5)
+    scheduler.add_job(scheduled_task, 'interval', seconds=1)
     scheduler.start()
+
+# Need some trigger to keep scheduler on task until stopped
 
 
 # Contact API
-# API_KEY = os.getenv('API_KEY')
-# headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
-# url = 'https://api.yelp.com/v3/businesses/search'
-# params = {'term': 'donut', 'location': '{}, {}'.format(str(city), str(state))}
+API_KEY = os.getenv('API_KEY')
+headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
+url = 'https://api.yelp.com/v3/businesses/search'
+# City and state are not assigned value here - need to pass in states
+params = {'term': 'donut', 'location': '{}, {}'.format(str(city), str(state))}
         
 # Get request to the API
-# response = requests.get(url, params=params, headers=headers)
+response = requests.get(url, params=params, headers=headers)
 
 # Check status code
-# print("status code {}".format(response.status_code))
+print("status code {}".format(response.status_code))
 
 # Print response
-# data = json.loads(response.text)
-# print(data)
+data = json.loads(response.text)
+print(data)
 
 # Connect to db
 def db_connect():
@@ -59,6 +62,7 @@ def index():
         ('UT', 'Utah'), ('VT', 'Vermont'), ('VA', 'Virginia'), ('WA', 'Washington'), ('WV', 'West Virginia'), ('WI', 'Wisconsin'), ('WY', 'Wyoming')
     ]
 
+    # Calling scheduled task as test
     scheduled_task()
     
     connection = db_connect()

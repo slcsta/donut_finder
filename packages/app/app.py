@@ -44,8 +44,10 @@ data = json.loads(response.text)
 pprint(data)
 
 # Parse data
+counter = 0
 shops = data['businesses']
 for shop in shops:
+    counter += 1
     name = shop['name'] 
     website = shop['url'] 
     rating = shop['rating'] 
@@ -55,7 +57,8 @@ for shop in shops:
     state = shop['location']['state'] 
     zip_code = shop['location']['zip_code'] 
     phone = shop['display_phone']
-    
+    print(counter)
+
 # Connect to db
 def db_connect():
     connection = sql.connect("donut_shops.db")

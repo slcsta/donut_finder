@@ -20,8 +20,9 @@ def scheduled_task():
 # Start scheduler 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
-    scheduler.add_job(scheduled_task, 'interval', seconds = 5)
+    scheduler.add_job(scheduled_task, 'interval', seconds=5)
     scheduler.start()
+
 
 # Contact API
 # API_KEY = os.getenv('API_KEY')
@@ -57,6 +58,8 @@ def index():
         ('OR', 'Oregon'), ('PA', 'Pennsylvania'), ('RI', 'Rhode Island'), ('SC', 'South Carolina'), ('SD', 'South Dakota'), ('TN','Tennessee'), ('TX', 'Texas'), 
         ('UT', 'Utah'), ('VT', 'Vermont'), ('VA', 'Virginia'), ('WA', 'Washington'), ('WV', 'West Virginia'), ('WI', 'Wisconsin'), ('WY', 'Wyoming')
     ]
+
+    scheduled_task()
     
     connection = db_connect()
     cursor = connection.cursor()

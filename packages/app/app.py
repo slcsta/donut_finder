@@ -3,6 +3,7 @@ import sqlite3 as sql
 import requests, json, os, time
 from dotenv import load_dotenv
 from datetime import datetime
+from pprint import pprint
 from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
@@ -27,18 +28,18 @@ headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
 url = 'https://api.yelp.com/v3/businesses/search'
 # City and state are not assigned value here - need to pass in states
 #params = {'term': 'donut', 'location': '{}, {}'.format(str(city), str(state))}
-params = {'term': 'donut', 'location': 'New York, NY'}
+params = {'term': 'donut', 'location': 'New York, NY', 'limit': 50}
         
 # Get request response. Set timeout to stop requests frm waiting after 5 seconds
 response = requests.get(url, params=params, headers=headers, timeout=5)
 
 # Check status code
-print(response.url)
+pprint(response.url)
 print("status code {}".format(response.status_code))
 
 # Print response
 data = json.loads(response.text)
-print(data)
+pprint(data)
 
 # Connect to db
 def db_connect():

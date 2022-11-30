@@ -36,6 +36,7 @@ params = {'term': 'donut', 'location': 'New York, NY', 'limit': 50}
 response = requests.get(url, params=params, headers=headers, timeout=5)
 
 # Check status code
+# Include all possible status codes here
 pprint(response.url)
 print("status code {}".format(response.status_code))
 

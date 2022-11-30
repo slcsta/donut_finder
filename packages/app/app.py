@@ -32,7 +32,7 @@ url = 'https://api.yelp.com/v3/businesses/search'
 #params = {'term': 'donut', 'location': '{}, {}'.format(str(city), str(state))}
 params = {'term': 'donut', 'location': 'New York, NY', 'limit': 50}
         
-# Get request response. Set timeout to stop requests frm waiting after 5 seconds
+# Get request response. Set timeout to stop requests from waiting after 5 seconds
 response = requests.get(url, params=params, headers=headers, timeout=5)
 
 # Check status code
@@ -58,6 +58,8 @@ for shop in shops:
     zip_code = shop['location']['zip_code'] 
     phone = shop['display_phone']
     print(counter)
+
+# After sub job of getting data from Yelp api complete, connect to db. Check if records exist, if not create new records. If so, replace/update existing records
 
 # Connect to db
 def db_connect():

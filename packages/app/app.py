@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3 as sql
 import requests, json, os, time
+from time import sleep
 from dotenv import load_dotenv
 from datetime import datetime
 from pprint import pprint
@@ -11,20 +12,36 @@ load_dotenv()
 # Configure application
 app = Flask(__name__)
 
-# Start scheduler 
-if __name__ == '__main__':
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(scheduled_task, 'interval', seconds=10)
-    scheduler.start()
+scheduler = BackgroundScheduler()
 
 # TODO Define jobs
-def scheduled_task():
+def fetch_yelp_data():
     ''' Job will go here '''
     print("This task is up and running")
 
-# TODO Need to log jobs and print out to terminal 
+def main():
+    scheduler.add_job(fetch_yelp_data, 'interval', seconds=5)
+    scheduler.start()
 
-# TODO Need some trigger to keep scheduler on task until stopped
+    try:
+        # This is here to simulate application activity (which keeps the main thread alive).
+        while True:
+            time.sleep(2)
+    except (KeyboardInterrupt, SystemExit):
+        # Not strictly necessary if daemonic mode is enabled but should be done if possible
+        # My question for the note above is what is daemonic mode - it's in docs to be enabled
+        scheduler.shutdown()
+
+# Start scheduler 
+if __name__ == '__main__':
+    print("true")
+
+else:
+    print("false")
+
+    main()
+   
+# TODO Need to log jobs and print out to terminal 
 
 # Contact API
 API_KEY = os.getenv('API_KEY')
@@ -55,19 +72,13 @@ elif response.status_code >= 300:
     #return None
 elif response.status_code == 200:
     data = json.loads(response.text)
-    pprint(data)
+    #pprint(data)
     print('status code {}'.format(response.status_code))
     print(response.url)
     #return
 else:
     print('[?] Unexpected Error: [HTTP {0}]: Content: {1}'.format(response.status_code, response.content))
     #return None
-
-    # for loop over each yelp business you are interested in
-    # make api request to get business data for business
-    # if you get back a TOO_MANY_REQUESTS_PER_SECOND error:
-    #     sleep for 1 second
-    #     retry making api request to get business data for business
 
 # Print response
 #pprint(data)
@@ -109,9 +120,6 @@ def index():
         ('UT', 'Utah'), ('VT', 'Vermont'), ('VA', 'Virginia'), ('WA', 'Washington'), ('WV', 'West Virginia'), ('WI', 'Wisconsin'), ('WY', 'Wyoming')
     ]
 
-    # Calling scheduled task as test
-    scheduled_task()
-    
     connection = db_connect()
     cursor = connection.cursor()
     city = request.args.get('city')

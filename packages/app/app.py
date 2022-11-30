@@ -19,6 +19,7 @@ def fetch_yelp_data():
     ''' Job will go here '''
     print("This task is up and running")
 
+# Main runs a while loop and sleeps indefinitely
 def main():
     scheduler.add_job(fetch_yelp_data, 'interval', seconds=5)
     scheduler.start()
@@ -28,19 +29,13 @@ def main():
         while True:
             time.sleep(2)
     except (KeyboardInterrupt, SystemExit):
-        # Not strictly necessary if daemonic mode is enabled but should be done if possible
-        # My question for the note above is what is daemonic mode - it's in docs to be enabled
+        # Not strictly necessary if daemonic mode is enabled but should be done if possible - daemonic mode????
         scheduler.shutdown()
 
 # Start scheduler 
 if __name__ == '__main__':
-    print("true")
-
-else:
-    print("false")
-
     main()
-   
+
 # TODO Need to log jobs and print out to terminal 
 
 # Contact API

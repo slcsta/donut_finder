@@ -17,12 +17,14 @@ if __name__ == '__main__':
     scheduler.add_job(scheduled_task, 'interval', seconds=10)
     scheduler.start()
 
-# Define jobs
+# TODO Define jobs
 def scheduled_task():
     ''' Job will go here '''
     print("This task is up and running")
 
-# Need some trigger to keep scheduler on task until stopped
+# TODO Need to log jobs and print out to terminal 
+
+# TODO Need some trigger to keep scheduler on task until stopped
 
 # Contact API
 API_KEY = os.getenv('API_KEY')
@@ -30,25 +32,51 @@ headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
 url = 'https://api.yelp.com/v3/businesses/search'
 # City and state are not assigned value here - need to pass in states
 #params = {'term': 'donut', 'location': '{}, {}'.format(str(city), str(state))}
-params = {'term': 'donut', 'location': 'New York, NY', 'limit': 50}
+params = {'term': 'donut', 'location': 'WA', 'limit': 50, 'offset':0}
         
 # Get request response. Set timeout to stop requests from waiting after 5 seconds
 response = requests.get(url, params=params, headers=headers, timeout=5)
 
-# Check status code
-# Include all possible status codes here
-pprint(response.url)
-print("status code {}".format(response.status_code))
+# TODO Error handling print status code
+if response.status_code >= 500:
+    print('[!] [{0}] Server Error: Something is wrong with Yelp'.format(response.status_code))
+    #return None
+elif response.status_code == 404:
+    print('[!] [{0}] URL not found: [{1}]'.format(response.status_code,api_url))
+    #return None  
+elif response.status_code == 401:
+    print('[!] [{0}] Authentication Failed'.format(response.status_code))
+    #return None
+elif response.status_code == 400:
+    print('[!] [{0}] Bad Request'.format(response.status_code))
+    #return None
+elif response.status_code >= 300:
+    print('[!] [{0}] Unexpected Redirect'.format(response.status_code))
+    #return None
+elif response.status_code == 200:
+    data = json.loads(response.text)
+    pprint(data)
+    print('status code {}'.format(response.status_code))
+    print(response.url)
+    #return
+else:
+    print('[?] Unexpected Error: [HTTP {0}]: Content: {1}'.format(response.status_code, response.content))
+    #return None
+
+    # for loop over each yelp business you are interested in
+    # make api request to get business data for business
+    # if you get back a TOO_MANY_REQUESTS_PER_SECOND error:
+    #     sleep for 1 second
+    #     retry making api request to get business data for business
 
 # Print response
-data = json.loads(response.text)
-pprint(data)
+#pprint(data)
 
 # Parse data
-counter = 0
+#counter = 0
 shops = data['businesses']
 for shop in shops:
-    counter += 1
+    #counter += 1
     name = shop['name'] 
     website = shop['url'] 
     rating = shop['rating'] 
@@ -58,9 +86,9 @@ for shop in shops:
     state = shop['location']['state'] 
     zip_code = shop['location']['zip_code'] 
     phone = shop['display_phone']
-    print(counter)
+    #print(counter)
 
-# After sub job of getting data from Yelp api complete, connect to db. Check if records exist, if not create new records. If so, replace/update existing records
+# TODO After sub job of getting data from Yelp api complete, connect to db. Check if records exist, if not create new records. If so, replace/update existing records
 
 # Connect to db
 def db_connect():

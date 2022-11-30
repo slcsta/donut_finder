@@ -1,12 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3 as sql
-from sqlite3 import Error
-import requests
-import json
-import os
+import requests, json, os, time
 from dotenv import load_dotenv
 from datetime import datetime
-import time
 from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
@@ -25,18 +21,19 @@ if __name__ == '__main__':
 
 # Need some trigger to keep scheduler on task until stopped
 
-
 # Contact API
 API_KEY = os.getenv('API_KEY')
 headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
 url = 'https://api.yelp.com/v3/businesses/search'
 # City and state are not assigned value here - need to pass in states
-params = {'term': 'donut', 'location': '{}, {}'.format(str(city), str(state))}
+#params = {'term': 'donut', 'location': '{}, {}'.format(str(city), str(state))}
+params = {'term': 'donut', 'location': 'New York, NY'}
         
-# Get request to the API
-response = requests.get(url, params=params, headers=headers)
+# Get request response. Set timeout to stop requests frm waiting after 5 seconds
+response = requests.get(url, params=params, headers=headers, timeout=5)
 
 # Check status code
+print(response.url)
 print("status code {}".format(response.status_code))
 
 # Print response

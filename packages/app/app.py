@@ -5,6 +5,7 @@ from time import sleep
 from dotenv import load_dotenv
 from datetime import datetime
 from pprint import pprint
+from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_EXECUTED
 from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
@@ -16,15 +17,24 @@ scheduler = BackgroundScheduler()
 logging.basicConfig()
 logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
+
 # TODO Define jobs
 def fetch_yelp_data():
     ''' Job will go here '''
     print("This task is up and running")
 
-# Main runs a while loop and sleeps indefinitely "in the background" - parallel to flask app
+def my_listener(event):
+    if event.exception:
+        print('The job crashed :(')
+    else:
+        print('The job worked :)')
+
+
+# Intend for main to run and sleep indefinitely w/while loop "in the background" - need to execute main b/c it's running when main is false right now
 def main():
     scheduler.add_job(fetch_yelp_data, 'interval', seconds=5)
     scheduler.start()
+    scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 
     try:
         while True:
@@ -35,7 +45,13 @@ def main():
 
 # Start scheduler 
 if __name__ == '__main__':
+    print("true")
+
+else:
+    print("false")
     main()
+
+
 
 # TODO Need to log jobs and print out to terminal 
 # TODO Need to handle missed job executions, errors that happen w/scheduled jobs

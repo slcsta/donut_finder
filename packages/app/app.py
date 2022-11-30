@@ -46,8 +46,16 @@ pprint(data)
 # Parse data
 shops = data['businesses']
 for shop in shops:
-
-
+    name = shop['name'] 
+    website = shop['url'] 
+    rating = shop['rating'] 
+    address = shop['location']['address1'] 
+    address2 = shop['location']['address2'] 
+    city = shop['location']['city'] 
+    state = shop['location']['state'] 
+    zip_code = shop['location']['zip_code'] 
+    phone = shop['display_phone']
+    
 # Connect to db
 def db_connect():
     connection = sql.connect("donut_shops.db")

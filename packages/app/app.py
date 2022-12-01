@@ -10,7 +10,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
-# TODO Pass states in dynamically for each job in apscheduler - then withinn each job, paginate results - need to increase scope (move to top)
+# TODO Pass states in dynamically for each job in apscheduler - then withinn each job, paginate results
     STATES = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
         ('DE', 'Delaware'), ('FL', 'Florida'), ('GA', 'Georgia'), ('HI', 'Hawaii'), ('ID', 'Idaho'), ('IL', 'Illinois'), ('IN', 'Indiana'), ('IA', 'Iowa'),
         ('KS', 'Kansas'), ('KY', 'Kentucky'), ('LA', 'Louisiana'), ('ME', 'Maine'), ('MD', 'Maryland'), ('MA', 'Massachusetts'), ('MI', 'Michigan'), 
@@ -28,7 +28,6 @@ def db_connect():
 
 # Define jobs - still todo: create a new job for each state - within each job paginate results
 def fetch_yelp_data():
-    # Contact API
     API_KEY = os.getenv('API_KEY')
     headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
@@ -50,8 +49,6 @@ def fetch_yelp_data():
         print('[!] [{0}] Bad Request'.format(response.status_code))
     elif response.status_code == 200:
         data = json.loads(response.text)
-        print('status code {}'.format(response.status_code))
-
         
         shops = data['businesses']
         connection = db_connect()

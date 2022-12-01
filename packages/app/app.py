@@ -17,8 +17,7 @@ def fetch_yelp_data():
     API_KEY = os.getenv('API_KEY')
     headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
-    # City and state are not assigned value here - need to pass in states
-    #params = {'term': 'donut', 'location': '{}, {}'.format(str(city), str(state))}
+    # Hardcoding state here for testing purposes - need to dynamically pass in all states
     params = {'term': 'donut', 'location': 'WA', 'limit': 50, 'offset':0}
         
     # Get request response. Set timeout to stop requests from waiting after 5 seconds
@@ -26,11 +25,25 @@ def fetch_yelp_data():
 
     if response.status_code == 200:
         data = json.loads(response.text)
-        pprint(data)
+        #pprint(data)
         print('status code {}'.format(response.status_code))
         #print(response.url)
 
-    #print("This task is up and running")
+        # Parse data
+        #counter = 0
+        shops = data['businesses']
+        for shop in shops:
+            # counter += 1
+            name = shop['name'] 
+            website = shop['url'] 
+            rating = shop['rating'] 
+            address = shop['location']['address1'] 
+            address2 = shop['location']['address2'] 
+            city = shop['location']['city'] 
+            state = shop['location']['state'] 
+            zip_code = shop['location']['zip_code'] 
+            phone = shop['display_phone']
+            print(name, rating, address, city)
 
 def my_listener(event):
     if event.exception:
@@ -39,7 +52,7 @@ def my_listener(event):
         print('The job worked :)')
 
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(fetch_yelp_data, 'interval', seconds=10)
+scheduler.add_job(fetch_yelp_data, 'interval', seconds=30)
 scheduler.start()
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 
@@ -86,22 +99,6 @@ if __name__ == '__main__':
 
 # Print response
 #pprint(data)
-
-# Parse data
-#counter = 0
-# shops = data['businesses']
-# for shop in shops:
-    #counter += 1
-    # name = shop['name'] 
-    # website = shop['url'] 
-    # rating = shop['rating'] 
-    # address = shop['location']['address1'] 
-    # address2 = shop['location']['address2'] 
-    # city = shop['location']['city'] 
-    # state = shop['location']['state'] 
-    # zip_code = shop['location']['zip_code'] 
-    # phone = shop['display_phone']
-    #print(counter)
 
 # TODO After sub job of getting data from Yelp api complete, connect to db. Check if records exist, if not create new records. If so, replace/update existing records
 

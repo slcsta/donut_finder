@@ -10,14 +10,14 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
-# TODO Define jobs
+# Define jobs
 def fetch_yelp_data():
     ''' Job will go here '''
     # Contact API
     API_KEY = os.getenv('API_KEY')
     headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
-    # Hardcoding state here for testing purposes - need to dynamically pass in all states
+    # Hardcoding state for testing purposes - need to dynamically pass in all states
     params = {'term': 'donut', 'location': 'WA', 'limit': 50, 'offset':0}
         
     # Get request response. Set timeout to stop requests from waiting after 5 seconds
@@ -25,15 +25,11 @@ def fetch_yelp_data():
 
     if response.status_code == 200:
         data = json.loads(response.text)
-        #pprint(data)
         print('status code {}'.format(response.status_code))
-        #print(response.url)
 
         # Parse data
-        #counter = 0
         shops = data['businesses']
         for shop in shops:
-            # counter += 1
             name = shop['name'] 
             website = shop['url'] 
             rating = shop['rating'] 
@@ -67,9 +63,7 @@ if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
     
 
-# TODO Need to log jobs and print out to terminal 
 # TODO Need to handle missed job executions, errors that happen w/scheduled jobs
-
 
 # TODO Error handling print status code
 # if response.status_code >= 500:
@@ -96,9 +90,6 @@ if __name__ == '__main__':
 # else:
 #     print('[?] Unexpected Error: [HTTP {0}]: Content: {1}'.format(response.status_code, response.content))
     #return None
-
-# Print response
-#pprint(data)
 
 # TODO After sub job of getting data from Yelp api complete, connect to db. Check if records exist, if not create new records. If so, replace/update existing records
 

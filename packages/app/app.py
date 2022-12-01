@@ -10,14 +10,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
-# Configure application
-app = Flask(__name__)
-
-scheduler = BackgroundScheduler()
-logging.basicConfig()
-logging.getLogger('apscheduler').setLevel(logging.DEBUG)
-
-
 # TODO Define jobs
 def fetch_yelp_data():
     ''' Job will go here '''
@@ -29,29 +21,28 @@ def my_listener(event):
     else:
         print('The job worked :)')
 
+scheduler = BackgroundScheduler(daemon=True)
+scheduler.add_job(fetch_yelp_data, 'interval', seconds=10)
+scheduler.start()
+scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 
-# Intend for main to run and sleep indefinitely w/while loop "in the background" - need to execute main b/c it's running when main is false right now
-def main():
-    scheduler.add_job(fetch_yelp_data, 'interval', seconds=5)
-    scheduler.start()
-    scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
+#logging.basicConfig()
+#logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
-    try:
-        while True:
-            time.sleep(2)
-    except (KeyboardInterrupt, SystemExit):
-        # Not strictly necessary if daemonic mode is enabled but should be done if possible - daemonic mode????
-        scheduler.shutdown()
+# Configure application
+app = Flask(__name__)
 
-# Start scheduler 
+
+# Having trouble running flask app and python script for apscheduler at the same time
 if __name__ == '__main__':
-    print("true")
-
-else:
-    print("false")
-    main()
-
-
+    app.run(debug=True, port=5000, host='0.0.0.0')
+    
+    # try:
+    #     while True:
+    #         time.sleep(2)
+    # except (KeyboardInterrupt, SystemExit):
+    #     # Not strictly necessary if daemonic mode is enabled but should be done if possible - daemonic mode????
+    #     scheduler.shutdown()
 
 # TODO Need to log jobs and print out to terminal 
 # TODO Need to handle missed job executions, errors that happen w/scheduled jobs

@@ -10,9 +10,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
-# Define jobs
+# Define jobs - still todo: create a new job for each state - within each job paginate results
 def fetch_yelp_data():
-    ''' Job will go here '''
     # Contact API
     API_KEY = os.getenv('API_KEY')
     headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
@@ -23,11 +22,18 @@ def fetch_yelp_data():
     # Get request response. Set timeout to stop requests from waiting after 5 seconds
     response = requests.get(url, params=params, headers=headers, timeout=5)
 
-    if response.status_code == 200:
+    if response.status_code >= 500:
+        print('[!] [{0}] Server Error: Something is wrong with Yelp'.format(response.status_code))
+    elif response.status_code == 404:
+        print('[!] [{0}] URL Not Found'.format(response.status_code,api_url))  
+    elif response.status_code == 401:
+        print('[!] [{0}] Authentication Failed'.format(response.status_code))
+    elif response.status_code == 400:
+        print('[!] [{0}] Bad Request'.format(response.status_code))
+    elif response.status_code == 200:
         data = json.loads(response.text)
         print('status code {}'.format(response.status_code))
-
-        # Parse data
+        #Parse data
         shops = data['businesses']
         for shop in shops:
             name = shop['name'] 
@@ -48,7 +54,7 @@ def my_listener(event):
         print('The job worked :)')
 
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(fetch_yelp_data, 'interval', seconds=30)
+scheduler.add_job(fetch_yelp_data, 'interval', seconds=3)
 scheduler.start()
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 
@@ -64,32 +70,6 @@ if __name__ == '__main__':
     
 
 # TODO Need to handle missed job executions, errors that happen w/scheduled jobs
-
-# TODO Error handling print status code
-# if response.status_code >= 500:
-#     print('[!] [{0}] Server Error: Something is wrong with Yelp'.format(response.status_code))
-    #return None
-# elif response.status_code == 404:
-#     print('[!] [{0}] URL not found: [{1}]'.format(response.status_code,api_url))
-    #return None  
-# elif response.status_code == 401:
-#     print('[!] [{0}] Authentication Failed'.format(response.status_code))
-    #return None
-# elif response.status_code == 400:
-#     print('[!] [{0}] Bad Request'.format(response.status_code))
-    #return None
-# elif response.status_code >= 300:
-#     print('[!] [{0}] Unexpected Redirect'.format(response.status_code))
-    #return None
-# elif response.status_code == 200:
-#     data = json.loads(response.text)
-    #pprint(data)
-    # print('status code {}'.format(response.status_code))
-    # print(response.url)
-    #return
-# else:
-#     print('[?] Unexpected Error: [HTTP {0}]: Content: {1}'.format(response.status_code, response.content))
-    #return None
 
 # TODO After sub job of getting data from Yelp api complete, connect to db. Check if records exist, if not create new records. If so, replace/update existing records
 

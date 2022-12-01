@@ -16,7 +16,7 @@ def fetch_yelp_data():
     API_KEY = os.getenv('API_KEY')
     headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
-    # TODO Hardcoding state for testing purposes - need to dynamically pass in all states
+    # TODO Hardcoding state for testing purposes - need to dynamically pass in each state separately for each job and then paginate w/in each job
     params = {'term': 'donut', 'location': 'WA', 'limit': 50, 'offset':0}
         
     # Get request response. Set timeout to stop requests from waiting after 5 seconds

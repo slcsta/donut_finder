@@ -16,12 +16,14 @@ def fetch_yelp_data():
     API_KEY = os.getenv('API_KEY')
     headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
-    # Hardcoding state for testing purposes - need to dynamically pass in all states
+    # TODO Hardcoding state for testing purposes - need to dynamically pass in all states
     params = {'term': 'donut', 'location': 'WA', 'limit': 50, 'offset':0}
         
     # Get request response. Set timeout to stop requests from waiting after 5 seconds
     response = requests.get(url, params=params, headers=headers, timeout=5)
 
+    # TODO What to do *when* there is an event exception? Perhaps pause jobs if jobs piling up or timing out, stop jobs and restart if server error or unknown error, or abort jobs if bad request
+    # Check for yelp api errors and print job status - may want to update to this: https://github.com/Yelp/yelp-python/blob/master/yelp/errors.py
     if response.status_code >= 500:
         print('[!] [{0}] Server Error: Something is wrong with Yelp'.format(response.status_code))
     elif response.status_code == 404:
@@ -68,9 +70,6 @@ app = Flask(__name__)
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
     
-
-# TODO Need to handle missed job executions, errors that happen w/scheduled jobs
-
 # TODO After sub job of getting data from Yelp api complete, connect to db. Check if records exist, if not create new records. If so, replace/update existing records
 
 # Connect to db

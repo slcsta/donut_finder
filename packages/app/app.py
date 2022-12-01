@@ -78,10 +78,10 @@ def db_connect():
     connection.row_factory = sql.Row
     return connection
 
-# Displays all db entries on index.html
-# Conditionally renders donut shops by city & state on search.html
+# Displays all db entries on index.html & renders donut shops by city & state on search.html
 @app.route("/", methods=['GET'])
 def index():
+    # TODO Pass states in dynamically for each job in apscheduler - need to increase scope (move to top)
     states = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
         ('DE', 'Delaware'), ('FL', 'Florida'), ('GA', 'Georgia'), ('HI', 'Hawaii'), ('ID', 'Idaho'), ('IL', 'Illinois'), ('IN', 'Indiana'), ('IA', 'Iowa'),
         ('KS', 'Kansas'), ('KY', 'Kentucky'), ('LA', 'Louisiana'), ('ME', 'Maine'), ('MD', 'Maryland'), ('MA', 'Massachusetts'), ('MI', 'Michigan'), 

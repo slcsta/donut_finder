@@ -38,7 +38,8 @@ def fetch_yelp_data():
     response = requests.get(url, params=params, headers=headers, timeout=5)
 
     # TODO What to do *when* there is an event exception? Perhaps pause jobs if jobs piling up or timing out, stop jobs and restart if server error or unknown error, or abort jobs if bad request
-    # Check for yelp api errors and print job status - may want to update to this: https://github.com/Yelp/yelp-python/blob/master/yelp/errors.py
+    # May want to update to this: https://github.com/Yelp/yelp-python/blob/master/yelp/errors.py
+    # Not an exhaustive list of errors - more to do here
     if response.status_code >= 500:
         print('[!] [{0}] Server Error: Something is wrong with Yelp'.format(response.status_code))
     elif response.status_code == 404:
@@ -57,7 +58,7 @@ def fetch_yelp_data():
             cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
             (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
             connection.commit()
-            # not sure when to close db
+            # not sure when to close db - not here, maybe at the end of each job
               
 def my_listener(event):
     if event.exception:

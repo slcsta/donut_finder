@@ -49,17 +49,8 @@ def fetch_yelp_data():
         for shop in shops:
             cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
             (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
-            # name = shop['name'] 
-            # website = shop['url'] 
-            # rating = shop['rating'] 
-            # address = shop['location']['address1'] 
-            # address2 = shop['location']['address2'] 
-            # city = shop['location']['city'] 
-            # state = shop['location']['state'] 
-            # zip_code = shop['location']['zip_code'] 
-            # phone = shop['display_phone']
-            # print(name, rating, address, city)
             connection.commit()
+            # not sure when to close db
               
 def my_listener(event):
     if event.exception:

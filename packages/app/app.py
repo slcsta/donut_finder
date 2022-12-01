@@ -20,7 +20,7 @@ def db_connect():
 def fetch_yelp_data():
     # Contact API
     API_KEY = os.getenv('API_KEY')
-    headers = {'Authorization': 'Bearer {0}'.format(API_KEY)}
+    headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
     # TODO Hardcoding state for testing purposes - need to dynamically pass in each state separately for each job and then paginate w/in each job
     params = {'term': 'donut', 'location': 'WA', 'limit': 50, 'offset':0}
@@ -41,28 +41,34 @@ def fetch_yelp_data():
     elif response.status_code == 200:
         data = json.loads(response.text)
         print('status code {}'.format(response.status_code))
-        #Parse data
-        shops = data['businesses']
-        for shop in shops:
-            name = shop['name'] 
-            website = shop['url'] 
-            rating = shop['rating'] 
-            address = shop['location']['address1'] 
-            address2 = shop['location']['address2'] 
-            city = shop['location']['city'] 
-            state = shop['location']['state'] 
-            zip_code = shop['location']['zip_code'] 
-            phone = shop['display_phone']
-            print(name, rating, address, city)
 
+        
+        shops = data['businesses']
+        connection = db_connect()
+        cursor = connection.cursor()
+        for shop in shops:
+            cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
+            (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
+            # name = shop['name'] 
+            # website = shop['url'] 
+            # rating = shop['rating'] 
+            # address = shop['location']['address1'] 
+            # address2 = shop['location']['address2'] 
+            # city = shop['location']['city'] 
+            # state = shop['location']['state'] 
+            # zip_code = shop['location']['zip_code'] 
+            # phone = shop['display_phone']
+            # print(name, rating, address, city)
+            connection.commit()
+              
 def my_listener(event):
     if event.exception:
         print('The job crashed :(')
     else:
         print('The job worked :)')
-
+        
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(fetch_yelp_data, 'interval', seconds=3)
+scheduler.add_job(fetch_yelp_data, 'interval', seconds=30)
 scheduler.start()
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 
@@ -76,7 +82,6 @@ app = Flask(__name__)
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
     
-# TODO After sub job of getting data from Yelp api complete, connect to db. Check if records exist, if not create new records. If so, replace/update existing records
 
 
 

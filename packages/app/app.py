@@ -10,6 +10,12 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
+# Connect to db
+def db_connect():
+    connection = sql.connect("donut_shops.db")
+    connection.row_factory = sql.Row
+    return connection
+
 # Define jobs - still todo: create a new job for each state - within each job paginate results
 def fetch_yelp_data():
     # Contact API
@@ -72,11 +78,7 @@ if __name__ == '__main__':
     
 # TODO After sub job of getting data from Yelp api complete, connect to db. Check if records exist, if not create new records. If so, replace/update existing records
 
-# Connect to db
-def db_connect():
-    connection = sql.connect("donut_shops.db")
-    connection.row_factory = sql.Row
-    return connection
+
 
 # Displays all db entries on index.html & renders donut shops by city & state on search.html
 @app.route("/", methods=['GET'])

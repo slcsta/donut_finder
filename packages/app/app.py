@@ -25,53 +25,58 @@ def db_connect():
     return connection
 
 # Detect errors
-def detect_errors():
+def detect_job_errors():
     """ Detect job errors here """
-    print("errors")
-    
-# Jobs to fetch Yelp data
-def fetch_yelp_data():
-    API_KEY = os.getenv('API_KEY')
-    headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
-    # Pagination
-    limit = 50
-    offset = 0
-    all_calls = []
-    url = 'https://api.yelp.com/v3/businesses/search'
-    for state in STATES:
-        while offset <= 150:
-            params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
-            # Get request response. Set timeout to stop requests from waiting after 5 seconds
-            response = requests.get(url, params=params, headers=headers, timeout=5)
-
-
     # TODO What to do *when* there is an event exception?
     # Maybe update to this: https://github.com/Yelp/yelp-python/blob/master/yelp/errors.py
     # Not an exhaustive list of errors - more to do here
     # If there are jobs skipped/misfired? what to do? Probably don't want to 
     # Create a function for error handling and then call it here
-        if response.status_code >= 500:
-            print('[!] [{0}] Server Error: Something is wrong with Yelp'.format(response.status_code))
-        elif response.status_code == 404:
-            print('[!] [{0}] URL Not Found'.format(response.status_code,api_url))  
-        elif response.status_code == 401:
-            print('[!] [{0}] Authentication Failed'.format(response.status_code))
-        elif response.status_code == 400:
-            print('[!] [{0}] Bad Request'.format(response.status_code))
-        elif response.status_code == 200:
-            data = json.loads(response.text)
-            # This is where I want to save results somewhere
-            offset = limit + offset
+    if response.status_code >= 500:
+        print('[!] [{0}] Server Error: Something is wrong with Yelp'.format(response.status_code))
+    elif response.status_code == 404:
+        print('[!] [{0}] URL Not Found'.format(response.status_code,api_url))  
+    elif response.status_code == 401:
+        print('[!] [{0}] Authentication Failed'.format(response.status_code))
+    elif response.status_code == 400:
+        print('[!] [{0}] Bad Request'.format(response.status_code))
+    elif response.status_code == 200:
+        data = json.loads(response.text)
+    print("errors")
 
-            # Once I've saved all results from state, then batch upsert to db        
-            shops = data['businesses']
-            connection = db_connect()
-            cursor = connection.cursor()
-            for shop in shops:
-                cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
-                (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
-                connection.commit()
-                # not sure when to close db - not here, maybe at the end of each job
+# Jobs to fetch Yelp data
+def fetch_yelp_data():
+    API_KEY = os.getenv('API_KEY')
+    headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
+    # Pagination
+    donut_shops = []
+    url = 'https://api.yelp.com/v3/businesses/search'
+    for state in STATES:
+        limit = 50
+        offset = 0
+        while offset <= 150:
+            print(offset)
+            params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
+            # Get request response. Set timeout to stop requests from waiting after 5 seconds
+            response = requests.get(url, params=params, headers=headers, timeout=5)
+            businesses = json.loads(response.text)['businesses']
+                # Append results to the all_calls array
+            for business in businesses:
+                donut_shops.append(business)
+                
+            if offset == 150:
+                break
+            # Set next offset amount
+            offset += limit
+
+        # Exit loop and upsert donut shops for each state to db        
+        connection = db_connect()
+    cursor = connection.cursor()
+    for shop in dounut_shops:
+        cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
+        (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
+        connection.commit()
+        # not sure when to close db - not here, maybe at the end of each job
               
 
 def my_listener(event):

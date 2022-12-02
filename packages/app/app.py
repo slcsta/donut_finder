@@ -26,12 +26,9 @@ def db_connect():
 
 # Detect errors
 def detect_job_errors():
-    """ Detect job errors here """
-    # TODO What to do *when* there is an event exception?
-    # Maybe update to this: https://github.com/Yelp/yelp-python/blob/master/yelp/errors.py
-    # Not an exhaustive list of errors - more to do here
-    # If there are jobs skipped/misfired? what to do? Probably don't want to 
-    # Create a function for error handling and then call it here
+    # TODO Handle errors - possibly update function to: https://github.com/Yelp/yelp-python/blob/master/yelp/errors.py
+    # Not an exhaustive list of errors - More to do
+    # Considering how to handle a job misfire/error to resume job(s) & pick up where it left off from w/out having to start over
     if response.status_code >= 500:
         print('[!] [{0}] Server Error: Something is wrong with Yelp'.format(response.status_code))
     elif response.status_code == 404:
@@ -69,19 +66,14 @@ def fetch_yelp_data():
             if offset > 50:
                 break
         
-        # Exit pagination loop and upsert donut shops for each state to db        
-        #connection = db_connect()
-        #cursor = connection.cursor()
+        # Exit pagination loop and upsert shops for each state to db        
+        connection = db_connect()
+        cursor = connection.cursor()
         for shop in donut_shops:
-            name = shop["name"],
-            city = shop["location"]["city"],
-            state = shop["location"]["state"]
-            ds_count = len(donut_shops)
-        print(name, city, state, ds_count)
-            # cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
-            # (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
-            # connection.commit()
-            # # not sure when to close db - not here, maybe at the end of each job
+            cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
+            (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
+            connection.commit()
+            # not sure when to close db - not here, maybe at the end of each job
 
 def my_listener(event):
     if event.exception:

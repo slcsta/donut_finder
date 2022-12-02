@@ -10,15 +10,13 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
-# TODO Pass states in dynamically for each job in apscheduler - then withinn each job, paginate results
 STATES = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
     ('DE', 'Delaware'), ('FL', 'Florida'), ('GA', 'Georgia'), ('HI', 'Hawaii'), ('ID', 'Idaho'), ('IL', 'Illinois'), ('IN', 'Indiana'), ('IA', 'Iowa'),
     ('KS', 'Kansas'), ('KY', 'Kentucky'), ('LA', 'Louisiana'), ('ME', 'Maine'), ('MD', 'Maryland'), ('MA', 'Massachusetts'), ('MI', 'Michigan'), 
     ('MN', 'Minnesota'), ('MS', 'Mississippi'), ('MO', 'Missouri'), ('MT', 'Montana'), ('NE', 'Nebraska'), ('NV', 'Nevada'), ('NH', 'New Hampshire'), 
     ('NJ', 'New Jersey'), ('NM', 'New Mexico'), ('NY', 'New York'), ('NC', 'North Carolina'), ('ND', 'North Dakota'), ('OH', 'Ohio'), ('OK', 'Oklahoma'), 
     ('OR', 'Oregon'), ('PA', 'Pennsylvania'), ('RI', 'Rhode Island'), ('SC', 'South Carolina'), ('SD', 'South Dakota'), ('TN','Tennessee'), ('TX', 'Texas'), 
-    ('UT', 'Utah'), ('VT', 'Vermont'), ('VA', 'Virginia'), ('WA', 'Washington'), ('WV', 'West Virginia'), ('WI', 'Wisconsin'), ('WY', 'Wyoming')
-]
+    ('UT', 'Utah'), ('VT', 'Vermont'), ('VA', 'Virginia'), ('WA', 'Washington'), ('WV', 'West Virginia'), ('WI', 'Wisconsin'), ('WY', 'Wyoming')]
 
 # Connect to db
 def db_connect():
@@ -26,21 +24,27 @@ def db_connect():
     connection.row_factory = sql.Row
     return connection
 
-# Define jobs - still todo: create a new job for each state - within each job paginate results
+# Jobs to fetch Yelp data
 def fetch_yelp_data():
     API_KEY = os.getenv('API_KEY')
     headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
+    # Pagination
+    limit = 50
+    offset = 0
+    all_calls = []
     url = 'https://api.yelp.com/v3/businesses/search'
     for state in STATES:
-    # TODO Hardcoding state for testing purposes - need to dynamically pass in each state separately for each job and then paginate w/in each job
-        params = {'term': 'donut', 'location': state[0], 'limit': 50, 'offset':0}
-        
-        # Get request response. Set timeout to stop requests from waiting after 5 seconds
-        response = requests.get(url, params=params, headers=headers, timeout=5)
+        while offset <= 150:
+            params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
+            # Get request response. Set timeout to stop requests from waiting after 5 seconds
+            response = requests.get(url, params=params, headers=headers, timeout=5)
+
 
     # TODO What to do *when* there is an event exception?
     # Maybe update to this: https://github.com/Yelp/yelp-python/blob/master/yelp/errors.py
     # Not an exhaustive list of errors - more to do here
+    # If there are jobs skipped/misfired? what to do? Probably don't want to 
+    # Create a function for error handling and then call it here
         if response.status_code >= 500:
             print('[!] [{0}] Server Error: Something is wrong with Yelp'.format(response.status_code))
         elif response.status_code == 404:
@@ -51,7 +55,10 @@ def fetch_yelp_data():
             print('[!] [{0}] Bad Request'.format(response.status_code))
         elif response.status_code == 200:
             data = json.loads(response.text)
-        
+            # This is where I want to save results somewhere
+            offset = limit + offset
+
+            # Once I've saved all results from state, then batch upsert to db        
             shops = data['businesses']
             connection = db_connect()
             cursor = connection.cursor()
@@ -61,6 +68,7 @@ def fetch_yelp_data():
                 connection.commit()
                 # not sure when to close db - not here, maybe at the end of each job
               
+
 def my_listener(event):
     if event.exception:
         print('The job crashed :(')

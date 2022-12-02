@@ -24,6 +24,11 @@ def db_connect():
     connection.row_factory = sql.Row
     return connection
 
+# Detect errors
+def detect_errors():
+    """ Detect job errors here """
+    print("errors")
+    
 # Jobs to fetch Yelp data
 def fetch_yelp_data():
     API_KEY = os.getenv('API_KEY')

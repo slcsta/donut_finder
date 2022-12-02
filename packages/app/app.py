@@ -61,7 +61,7 @@ def fetch_yelp_data():
         limit = 50
         offset = 0
         donut_shops = []
-        while offset <= 150:
+        while offset <= 50:
             print(offset)
             params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
             # Get request response. Set timeout to stop requests from waiting after 5 seconds
@@ -72,13 +72,13 @@ def fetch_yelp_data():
                 donut_shops.append(business)
                 
             offset += limit
-            if offset > 150:
+            if offset > 50:
                 break
         
         # Exit pagination loop and upsert donut shops for each state to db        
         #connection = db_connect()
         #cursor = connection.cursor()
-        for shop in dounut_shops:
+        for shop in donut_shops:
             name = shop["name"],
             city = shop["location"]["city"],
             state = shop["location"]["state"]
@@ -90,7 +90,7 @@ def fetch_yelp_data():
             # # not sure when to close db - not here, maybe at the end of each job
         
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(fetch_yelp_data, 'interval', seconds=30)
+scheduler.add_job(fetch_yelp_data, 'interval', seconds=10)
 scheduler.start()
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 

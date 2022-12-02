@@ -44,12 +44,6 @@ def detect_job_errors():
         data = json.loads(response.text)
     print("errors")
 
-def my_listener(event):
-    if event.exception:
-        print('The job crashed :(')
-    else:
-        print('The job worked :)')
-
 # Jobs to fetch Yelp data
 def fetch_yelp_data():
     API_KEY = os.getenv('API_KEY')
@@ -88,6 +82,12 @@ def fetch_yelp_data():
             # (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
             # connection.commit()
             # # not sure when to close db - not here, maybe at the end of each job
+
+def my_listener(event):
+    if event.exception:
+        print('The job crashed :(')
+    else:
+        print('The job worked :)')
         
 scheduler = BackgroundScheduler(daemon=True)
 scheduler.add_job(fetch_yelp_data, 'interval', seconds=10)

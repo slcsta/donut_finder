@@ -11,14 +11,14 @@ from apscheduler.schedulers.background import BackgroundScheduler
 load_dotenv()
 
 # TODO Pass states in dynamically for each job in apscheduler - then withinn each job, paginate results
-    STATES = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
-        ('DE', 'Delaware'), ('FL', 'Florida'), ('GA', 'Georgia'), ('HI', 'Hawaii'), ('ID', 'Idaho'), ('IL', 'Illinois'), ('IN', 'Indiana'), ('IA', 'Iowa'),
-        ('KS', 'Kansas'), ('KY', 'Kentucky'), ('LA', 'Louisiana'), ('ME', 'Maine'), ('MD', 'Maryland'), ('MA', 'Massachusetts'), ('MI', 'Michigan'), 
-        ('MN', 'Minnesota'), ('MS', 'Mississippi'), ('MO', 'Missouri'), ('MT', 'Montana'), ('NE', 'Nebraska'), ('NV', 'Nevada'), ('NH', 'New Hampshire'), 
-        ('NJ', 'New Jersey'), ('NM', 'New Mexico'), ('NY', 'New York'), ('NC', 'North Carolina'), ('ND', 'North Dakota'), ('OH', 'Ohio'), ('OK', 'Oklahoma'), 
-        ('OR', 'Oregon'), ('PA', 'Pennsylvania'), ('RI', 'Rhode Island'), ('SC', 'South Carolina'), ('SD', 'South Dakota'), ('TN','Tennessee'), ('TX', 'Texas'), 
-        ('UT', 'Utah'), ('VT', 'Vermont'), ('VA', 'Virginia'), ('WA', 'Washington'), ('WV', 'West Virginia'), ('WI', 'Wisconsin'), ('WY', 'Wyoming')
-    ]
+STATES = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
+    ('DE', 'Delaware'), ('FL', 'Florida'), ('GA', 'Georgia'), ('HI', 'Hawaii'), ('ID', 'Idaho'), ('IL', 'Illinois'), ('IN', 'Indiana'), ('IA', 'Iowa'),
+    ('KS', 'Kansas'), ('KY', 'Kentucky'), ('LA', 'Louisiana'), ('ME', 'Maine'), ('MD', 'Maryland'), ('MA', 'Massachusetts'), ('MI', 'Michigan'), 
+    ('MN', 'Minnesota'), ('MS', 'Mississippi'), ('MO', 'Missouri'), ('MT', 'Montana'), ('NE', 'Nebraska'), ('NV', 'Nevada'), ('NH', 'New Hampshire'), 
+    ('NJ', 'New Jersey'), ('NM', 'New Mexico'), ('NY', 'New York'), ('NC', 'North Carolina'), ('ND', 'North Dakota'), ('OH', 'Ohio'), ('OK', 'Oklahoma'), 
+    ('OR', 'Oregon'), ('PA', 'Pennsylvania'), ('RI', 'Rhode Island'), ('SC', 'South Carolina'), ('SD', 'South Dakota'), ('TN','Tennessee'), ('TX', 'Texas'), 
+    ('UT', 'Utah'), ('VT', 'Vermont'), ('VA', 'Virginia'), ('WA', 'Washington'), ('WV', 'West Virginia'), ('WI', 'Wisconsin'), ('WY', 'Wyoming')
+]
 
 # Connect to db
 def db_connect():
@@ -31,34 +31,35 @@ def fetch_yelp_data():
     API_KEY = os.getenv('API_KEY')
     headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
+    for state in STATES:
     # TODO Hardcoding state for testing purposes - need to dynamically pass in each state separately for each job and then paginate w/in each job
-    params = {'term': 'donut', 'location': 'WA', 'limit': 50, 'offset':0}
+        params = {'term': 'donut', 'location': state[0], 'limit': 50, 'offset':0}
         
-    # Get request response. Set timeout to stop requests from waiting after 5 seconds
-    response = requests.get(url, params=params, headers=headers, timeout=5)
+        # Get request response. Set timeout to stop requests from waiting after 5 seconds
+        response = requests.get(url, params=params, headers=headers, timeout=5)
 
-    # TODO What to do *when* there is an event exception? Perhaps pause jobs if jobs piling up or timing out, stop jobs and restart if server error or unknown error, or abort jobs if bad request
-    # May want to update to this: https://github.com/Yelp/yelp-python/blob/master/yelp/errors.py
+    # TODO What to do *when* there is an event exception?
+    # Maybe update to this: https://github.com/Yelp/yelp-python/blob/master/yelp/errors.py
     # Not an exhaustive list of errors - more to do here
-    if response.status_code >= 500:
-        print('[!] [{0}] Server Error: Something is wrong with Yelp'.format(response.status_code))
-    elif response.status_code == 404:
-        print('[!] [{0}] URL Not Found'.format(response.status_code,api_url))  
-    elif response.status_code == 401:
-        print('[!] [{0}] Authentication Failed'.format(response.status_code))
-    elif response.status_code == 400:
-        print('[!] [{0}] Bad Request'.format(response.status_code))
-    elif response.status_code == 200:
-        data = json.loads(response.text)
+        if response.status_code >= 500:
+            print('[!] [{0}] Server Error: Something is wrong with Yelp'.format(response.status_code))
+        elif response.status_code == 404:
+            print('[!] [{0}] URL Not Found'.format(response.status_code,api_url))  
+        elif response.status_code == 401:
+            print('[!] [{0}] Authentication Failed'.format(response.status_code))
+        elif response.status_code == 400:
+            print('[!] [{0}] Bad Request'.format(response.status_code))
+        elif response.status_code == 200:
+            data = json.loads(response.text)
         
-        shops = data['businesses']
-        connection = db_connect()
-        cursor = connection.cursor()
-        for shop in shops:
-            cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
-            (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
-            connection.commit()
-            # not sure when to close db - not here, maybe at the end of each job
+            shops = data['businesses']
+            connection = db_connect()
+            cursor = connection.cursor()
+            for shop in shops:
+                cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
+                (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
+                connection.commit()
+                # not sure when to close db - not here, maybe at the end of each job
               
 def my_listener(event):
     if event.exception:
@@ -77,7 +78,7 @@ scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 # Configure application
 app = Flask(__name__)
 
-# Having trouble running flask app and python script for apscheduler at the same time - appears to be working but this conditional still returns false
+# This still returns false 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
     
@@ -105,4 +106,4 @@ def index():
         table_title = "All Donut Shops"
         shops = cursor.execute("SELECT * FROM shops").fetchall()
         connection.close()
-        return render_template("index.html", shops=shops, table_title=table_title, states=states)
+        return render_template("index.html", shops=shops, table_title=table_title, states=STATES)

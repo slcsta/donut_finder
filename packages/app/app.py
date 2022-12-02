@@ -48,12 +48,13 @@ def detect_job_errors():
 def fetch_yelp_data():
     API_KEY = os.getenv('API_KEY')
     headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
-    # Pagination
-    donut_shops = []
     url = 'https://api.yelp.com/v3/businesses/search'
+    # Data request for each state
     for state in STATES:
+        # Pagination
         limit = 50
         offset = 0
+        donut_shops = []
         while offset <= 150:
             print(offset)
             params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
@@ -64,20 +65,23 @@ def fetch_yelp_data():
             for business in businesses:
                 donut_shops.append(business)
                 
-            if offset == 150:
-                break
-            # Set next offset amount
             offset += limit
-
-        # Exit loop and upsert donut shops for each state to db        
-        connection = db_connect()
-    cursor = connection.cursor()
-    for shop in dounut_shops:
-        cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
-        (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
-        connection.commit()
-        # not sure when to close db - not here, maybe at the end of each job
-              
+            if offset > 150:
+                break
+        
+        # Exit pagination loop and upsert donut shops for each state to db        
+        #connection = db_connect()
+        #cursor = connection.cursor()
+        for shop in dounut_shops:
+            name = shop["name"],
+            city = shop["location"]["city"],
+            state = shop["location"]["state"]
+            ds_count = len(donut_shops)
+        print(name, city, state, ds_count)
+            # cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
+            # (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
+            # connection.commit()
+            # # not sure when to close db - not here, maybe at the end of each job
 
 def my_listener(event):
     if event.exception:

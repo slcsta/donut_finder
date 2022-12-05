@@ -49,13 +49,14 @@ def fetch_yelp_data(state):
     headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
     donut_shops = []
-    #offset = 0
-    #while offset <= 50:
+    limit = 50
+    offset = 0
+    while offset <= 50:
     params = {'term': 'donut', 'location': state[0], 'limit': 20, 'offset': 0}
     # Get request response. Set timeout to stop requests from waiting after 5 seconds
     response = requests.get(url, params=params, headers=headers, timeout=5)
     data = json.loads(response.text)['businesses']
-        # Append results to the donut_shops array
+    # Append results to the donut_shops array
     for d in data:
         donut_shops.append(d)
                 
@@ -76,7 +77,7 @@ scheduler = BackgroundScheduler(daemon=True)
 # Add each state as individual job
 for state in STATES:
     scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
-    scheduler.add_job(fetch_yelp_data, 'interval', args=[state], max_instances=1, seconds=30)
+    scheduler.add_job(fetch_yelp_data, 'interval', args=[state], max_instances=1, seconds=10)
 if not scheduler.running:
     scheduler.start()
     

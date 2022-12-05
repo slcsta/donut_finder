@@ -34,12 +34,6 @@ def detect_error():
     # Message + status code and that's all I need
     if response.status_code:
         print('Error!'.format(response.status_code))
-    # elif response.status_code == 404:
-    #     print('[!] [{0}] URL Not Found'.format(response.status_code,api_url))  
-    # elif response.status_code == 401:
-    #     print('[!] [{0}] Authentication Failed'.format(response.status_code))
-    # elif response.status_code == 400:
-    #     print('[!] [{0}] Bad Request'.format(response.status_code))
     elif response.status_code == 200:
         data = json.loads(response.text)
 
@@ -54,16 +48,13 @@ def fetch_yelp_data(state):
     API_KEY = os.getenv('API_KEY')
     headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
-    # Data request for each state
-    # for state in STATES:
-    # Pagination
     donut_shops = []
     #offset = 0
     #while offset <= 50:
     params = {'term': 'donut', 'location': state[0], 'limit': 20, 'offset': 0}
     # Get request response. Set timeout to stop requests from waiting after 5 seconds
     response = requests.get(url, params=params, headers=headers, timeout=5)
-    businesses = json.loads(response.text)['businesses']
+    data = json.loads(response.text)['businesses']
         # Append results to the donut_shops array
     for business in businesses:
         donut_shops.append(business)

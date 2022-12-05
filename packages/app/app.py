@@ -43,14 +43,15 @@ def fetch_yelp_data(state):
     url = 'https://api.yelp.com/v3/businesses/search'
     
     # Paginates results
-    # sleep(randint(10, 30))
+    sleep(randint(10, 30))
     offset = 0
-    while offset <= 40:
-        offset += 20   
-        params = {'term': 'donut', 'location': state[0], 'limit': 1, 'offset': offset}
+    while offset <= 4:
+        offset += 2   
+        params = {'term': 'donut', 'location': state[0], 'limit': 2, 'offset': offset}
         response = requests.get(url, params=params, headers=headers, timeout=15)
-        donut_shops = json.loads(response.text)['businesses']
-        
+        print(response)
+        donut_shops = response.json()['businesses']
+        print(donut_shops)
         # Upserts donut shops  
         for shop in donut_shops:
             print(shop["name"])      
@@ -74,7 +75,7 @@ for state in STATES:
 if not scheduler.running:
     scheduler.start()
     
-#logging.getLogger('apscheduler').setLevel(logging.DEBUG)
+logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
 # Configures Flask app
 app = Flask(__name__)

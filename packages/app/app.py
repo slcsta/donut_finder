@@ -56,8 +56,8 @@ def fetch_yelp_data(state):
     response = requests.get(url, params=params, headers=headers, timeout=5)
     data = json.loads(response.text)['businesses']
         # Append results to the donut_shops array
-    for business in businesses:
-        donut_shops.append(business)
+    for d in data:
+        donut_shops.append(d)
                 
     #offset += limit
     print(donut_shops)

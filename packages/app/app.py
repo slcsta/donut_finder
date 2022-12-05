@@ -10,7 +10,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
-#logging.basicConfig()
+logging.basicConfig()
 
 #scheduler = BackgroundScheduler(daemon=True)
 

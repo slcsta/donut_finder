@@ -52,16 +52,16 @@ def fetch_yelp_data(state):
     limit = 50
     offset = 0
     while offset <= 50:
-    params = {'term': 'donut', 'location': state[0], 'limit': 20, 'offset': 0}
-    # Get request response. Set timeout to stop requests from waiting after 5 seconds
-    response = requests.get(url, params=params, headers=headers, timeout=5)
-    data = json.loads(response.text)['businesses']
-    # Append results to the donut_shops array
-    for d in data:
-        donut_shops.append(d)
+        params = {'term': 'donut', 'location': state[0], 'limit': 20, 'offset': 0}
+        # Get request response. Set timeout to stop requests from waiting after 5 seconds
+        response = requests.get(url, params=params, headers=headers, timeout=5)
+        businesses = json.loads(response.text)['businesses']
+        # Append results to the donut_shops array
+        for business in businesses:
+            donut_shops.append(d)
                 
-    #offset += limit
-    print(donut_shops)
+        offset += limit
+        print(donut_shops)
         
         Upsert shops for each state to db        
         connection = db_connect()
@@ -71,7 +71,7 @@ def fetch_yelp_data(state):
             (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
             connection.commit()
             print("{state} successfully upserted")
-            connection.close()
+            #connection.close()
 
 scheduler = BackgroundScheduler(daemon=True)
 # Add each state as individual job

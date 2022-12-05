@@ -10,6 +10,10 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
+#logging.basicConfig()
+
+#scheduler = BackgroundScheduler(daemon=True)
+
 STATES = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
     ('DE', 'Delaware'), ('FL', 'Florida'), ('GA', 'Georgia'), ('HI', 'Hawaii'), ('ID', 'Idaho'), ('IL', 'Illinois'), ('IN', 'Indiana'), ('IA', 'Iowa'),
     ('KS', 'Kansas'), ('KY', 'Kentucky'), ('LA', 'Louisiana'), ('ME', 'Maine'), ('MD', 'Maryland'), ('MA', 'Massachusetts'), ('MI', 'Michigan'), 
@@ -25,68 +29,79 @@ def db_connect():
     return connection
 
 # Detect errors
-def detect_job_errors():
+def detect_error():
     # TODO Handle errors - possibly update function to: https://github.com/Yelp/yelp-python/blob/master/yelp/errors.py
-    # Not an exhaustive list of errors - More to do
-    # Considering how to handle a job misfire/error to resume job(s) & pick up where it left off from w/out having to start over
-    if response.status_code >= 500:
-        print('[!] [{0}] Server Error: Something is wrong with Yelp'.format(response.status_code))
-    elif response.status_code == 404:
-        print('[!] [{0}] URL Not Found'.format(response.status_code,api_url))  
-    elif response.status_code == 401:
-        print('[!] [{0}] Authentication Failed'.format(response.status_code))
-    elif response.status_code == 400:
-        print('[!] [{0}] Bad Request'.format(response.status_code))
+    # Message + status code and that's all I need
+    if response.status_code:
+        print('Error!'.format(response.status_code))
+    # elif response.status_code == 404:
+    #     print('[!] [{0}] URL Not Found'.format(response.status_code,api_url))  
+    # elif response.status_code == 401:
+    #     print('[!] [{0}] Authentication Failed'.format(response.status_code))
+    # elif response.status_code == 400:
+    #     print('[!] [{0}] Bad Request'.format(response.status_code))
     elif response.status_code == 200:
         data = json.loads(response.text)
-    print("errors")
 
-# Jobs to fetch Yelp data
-def fetch_yelp_data():
+def my_listener(event):
+    if event.exception:
+        logging.warning('The job crashed :(')     
+    else:
+        logging.info('The job worked :)')
+
+# Define job to fetch Yelp data
+def fetch_yelp_data(state):
     API_KEY = os.getenv('API_KEY')
     headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
     # Data request for each state
-    for state in STATES:
-        # Pagination
-        limit = 50
-        offset = 0
-        donut_shops = []
-        while offset <= 50:
-            print(offset)
-            params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
-            # Get request response. Set timeout to stop requests from waiting after 5 seconds
-            response = requests.get(url, params=params, headers=headers, timeout=5)
-            businesses = json.loads(response.text)['businesses']
-                # Append results to the all_calls array
-            for business in businesses:
-                donut_shops.append(business)
+    # for state in STATES:
+    # Pagination
+    donut_shops = []
+    #offset = 0
+    #while offset <= 50:
+    params = {'term': 'donut', 'location': state[0], 'limit': 20, 'offset': 0}
+    # Get request response. Set timeout to stop requests from waiting after 5 seconds
+    response = requests.get(url, params=params, headers=headers, timeout=5)
+    businesses = json.loads(response.text)['businesses']
+        # Append results to the donut_shops array
+    for business in businesses:
+        donut_shops.append(business)
                 
-            offset += limit
-            if offset > 50:
-                break
+    #offset += limit
+    print(donut_shops)
         
-        # Exit pagination loop and upsert shops for each state to db        
-        connection = db_connect()
-        cursor = connection.cursor()
-        for shop in donut_shops:
-            cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
-            (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
-            connection.commit()
-            # not sure when to close db - not here, maybe at the end of each job
+        # Upsert shops for each state to db        
+        # connection = db_connect()
+        # cursor = connection.cursor()
+        # for shop in donut_shops:
+        #     cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
+        #     (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
+        #     connection.commit()
+        #     print("{state} successfully upserted")
+            #connection.close()
 
-def my_listener(event):
-    if event.exception:
-        print('The job crashed :(')
-    else:
-        print('The job worked :)')
-        
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(fetch_yelp_data, 'interval', seconds=10)
-scheduler.start()
-scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
+# Add each state as individual job
+for state in STATES:
+    scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
+    scheduler.add_job(fetch_yelp_data, 'interval', args=[state], max_instances=1, seconds=30)
+if not scheduler.running:
+    scheduler.start()
+    
 
-#logging.basicConfig()
+# scheduler = BackgroundScheduler(daemon=True)
+# # possible add each state as individual job
+# for state in STATES:
+#     scheduler.add_job(fetch_yelp_data, 'interval', seconds=10)
+#     scheduler.start()
+#     scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
+#     print(state)
+
+# Multi row, single column state tracker - get through all pages then reset offset
+# Scenario - encounter error - keep goin w/jobs - mark offset in db
+
+
 #logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
 # Configure application
@@ -94,7 +109,7 @@ app = Flask(__name__)
 
 # This still returns false 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000, host='0.0.0.0')
+    app.run(debug=True, port=5000, host='0.0.0.0', use_reloader=False)
     
 # Displays all db entries on index.html & renders donut shops by city & state on search.html
 @app.route("/", methods=['GET'])

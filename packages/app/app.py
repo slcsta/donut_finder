@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3 as sql
 import requests, json, os, time, logging
+from random import randint
 from time import sleep
 from dotenv import load_dotenv
 from datetime import datetime
@@ -14,35 +15,34 @@ logging.basicConfig()
 
 #scheduler = BackgroundScheduler(daemon=True)
 
-STATES = [('AL', 'Alabama'), ('AK', 'Alaska')]
-
-"""STATES = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
+STATES = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
     ('DE', 'Delaware'), ('FL', 'Florida'), ('GA', 'Georgia'), ('HI', 'Hawaii'), ('ID', 'Idaho'), ('IL', 'Illinois'), ('IN', 'Indiana'), ('IA', 'Iowa'),
     ('KS', 'Kansas'), ('KY', 'Kentucky'), ('LA', 'Louisiana'), ('ME', 'Maine'), ('MD', 'Maryland'), ('MA', 'Massachusetts'), ('MI', 'Michigan'), 
     ('MN', 'Minnesota'), ('MS', 'Mississippi'), ('MO', 'Missouri'), ('MT', 'Montana'), ('NE', 'Nebraska'), ('NV', 'Nevada'), ('NH', 'New Hampshire'), 
     ('NJ', 'New Jersey'), ('NM', 'New Mexico'), ('NY', 'New York'), ('NC', 'North Carolina'), ('ND', 'North Dakota'), ('OH', 'Ohio'), ('OK', 'Oklahoma'), 
     ('OR', 'Oregon'), ('PA', 'Pennsylvania'), ('RI', 'Rhode Island'), ('SC', 'South Carolina'), ('SD', 'South Dakota'), ('TN','Tennessee'), ('TX', 'Texas'), 
-    ('UT', 'Utah'), ('VT', 'Vermont'), ('VA', 'Virginia'), ('WA', 'Washington'), ('WV', 'West Virginia'), ('WI', 'Wisconsin'), ('WY', 'Wyoming')]"""
+    ('UT', 'Utah'), ('VT', 'Vermont'), ('VA', 'Virginia'), ('WA', 'Washington'), ('WV', 'West Virginia'), ('WI', 'Wisconsin'), ('WY', 'Wyoming')]
 
-# Connect to db
+# Connects to db
 def db_connect():
     connection = sql.connect("donut_shops.db")
     connection.row_factory = sql.Row
     return connection
 
-# Detect events and log them
+# Detects events and logs them
 def my_listener(event):
     if event.exception:
         logging.warning('The job crashed :(')     
     else:
         logging.info('The job worked :)')
 
-# Define job to fetch Yelp data
-# Potential pauses between each loop of offset b/c yelp api errors - Random number 
+# Defines job to fetch Yelp data
 def fetch_yelp_data(state):
     API_KEY = os.getenv('API_KEY')
     headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
+    
+    # Paginates results
     offset = 0
     while offset <= 40:
         offset += 20
@@ -51,7 +51,7 @@ def fetch_yelp_data(state):
         response = requests.get(url, params=params, headers=headers, timeout=5)
         donut_shops = json.loads(response.text)['businesses']
         
-        # Upsert shops for each state to db  
+        # Upserts donut shops  
         for shop in donut_shops:
             print(shop["name"])      
         connection = db_connect()
@@ -60,13 +60,15 @@ def fetch_yelp_data(state):
             cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
             (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
             connection.commit()
+
+        sleep(randint(1,6))
             
         if offset == 40:
             break
             connection.close()
 
+# Schedules jobs
 scheduler = BackgroundScheduler(daemon=True)
-# Add fetch data job for each state
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 for state in STATES:
     scheduler.add_job(fetch_yelp_data, 'interval', args=[state], max_instances=1, seconds=10)
@@ -75,10 +77,10 @@ if not scheduler.running:
     
 #logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
-# Configure Flask app
+# Configures Flask app
 app = Flask(__name__)
 
-# Enable app and scheduler to run in parallel
+# Enables app and scheduler to run simultaneous
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0', use_reloader=False)
     

@@ -49,15 +49,13 @@ def fetch_yelp_data(state):
     headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
     limit = 20
+    offset = 0
     # Potential pauses between each loop of offset b/c yelp api errors - Random number 
     while offset <= 40:
+        offset += limit
+        print(offset)
         params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
-        # Get request response. Set timeout to stop requests from waiting after 5 seconds
         response = requests.get(url, params=params, headers=headers, timeout=5)
-        # if response.status_code:
-        #     print('Error!'.format(response.status_code))
-        # elif response.status_code == 200:
-        # Look at businesses value
         donut_shops = json.loads(response.text)['businesses']
         # Upsert shops for each state to db  
         for shop in donut_shops:
@@ -70,8 +68,6 @@ def fetch_yelp_data(state):
             (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
             connection.commit()
             #connection.close()
-         
-    offset += limit
 
 scheduler = BackgroundScheduler(daemon=True)
 # Add each state as individual job

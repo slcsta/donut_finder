@@ -63,15 +63,15 @@ def fetch_yelp_data(state):
     #offset += limit
     print(donut_shops)
         
-        # Upsert shops for each state to db        
-        # connection = db_connect()
-        # cursor = connection.cursor()
-        # for shop in donut_shops:
-        #     cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
-        #     (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
-        #     connection.commit()
-        #     print("{state} successfully upserted")
-            #connection.close()
+        Upsert shops for each state to db        
+        connection = db_connect()
+        cursor = connection.cursor()
+        for shop in donut_shops:
+            cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
+            (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
+            connection.commit()
+            print("{state} successfully upserted")
+            connection.close()
 
 scheduler = BackgroundScheduler(daemon=True)
 # Add each state as individual job

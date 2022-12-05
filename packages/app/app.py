@@ -13,7 +13,7 @@ load_dotenv()
 
 logging.basicConfig()
 
-#scheduler = BackgroundScheduler(daemon=True)
+scheduler = BackgroundScheduler(daemon=True)
 
 STATES = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
     ('DE', 'Delaware'), ('FL', 'Florida'), ('GA', 'Georgia'), ('HI', 'Hawaii'), ('ID', 'Idaho'), ('IL', 'Illinois'), ('IN', 'Indiana'), ('IA', 'Iowa'),
@@ -43,12 +43,12 @@ def fetch_yelp_data(state):
     url = 'https://api.yelp.com/v3/businesses/search'
     
     # Paginates results
+    # sleep(randint(10, 30))
     offset = 0
     while offset <= 40:
-        offset += 20
-        print(offset)
-        params = {'term': 'donut', 'location': state[0], 'limit': 20, 'offset': offset}
-        response = requests.get(url, params=params, headers=headers, timeout=5)
+        offset += 20   
+        params = {'term': 'donut', 'location': state[0], 'limit': 1, 'offset': offset}
+        response = requests.get(url, params=params, headers=headers, timeout=15)
         donut_shops = json.loads(response.text)['businesses']
         
         # Upserts donut shops  
@@ -60,15 +60,14 @@ def fetch_yelp_data(state):
             cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
             (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
             connection.commit()
-
-        sleep(randint(1,6))
-            
+ 
         if offset == 40:
             break
             connection.close()
+            #sleep(randint(10, 30))
 
 # Schedules jobs
-scheduler = BackgroundScheduler(daemon=True)
+#scheduler = BackgroundScheduler(daemon=True)
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 for state in STATES:
     scheduler.add_job(fetch_yelp_data, 'interval', args=[state], max_instances=1, seconds=10)

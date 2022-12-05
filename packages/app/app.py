@@ -56,19 +56,20 @@ def fetch_yelp_data(state):
         params = {'term': 'donut', 'location': state[0], 'limit': 20, 'offset': offset}
         response = requests.get(url, params=params, headers=headers, timeout=5)
         donut_shops = json.loads(response.text)['businesses']
+        
         # Upsert shops for each state to db  
         for shop in donut_shops:
             print(shop["name"])      
         connection = db_connect()
         cursor = connection.cursor()
-        # Insert businesses - not for shop in donut_shops
         for shop in donut_shops:
             cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
             (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
             connection.commit()
-            #connection.close()
+            
         if offset == 40:
             break
+            connection.close()
 
 scheduler = BackgroundScheduler(daemon=True)
 # Add each state as individual job

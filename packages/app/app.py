@@ -51,7 +51,7 @@ def fetch_yelp_data(state):
     url = 'https://api.yelp.com/v3/businesses/search'
     offset = 0
     while offset <= 40:
-        offset += limit
+        offset += 20
         print(offset)
         params = {'term': 'donut', 'location': state[0], 'limit': 20, 'offset': offset}
         response = requests.get(url, params=params, headers=headers, timeout=5)

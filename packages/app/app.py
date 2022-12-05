@@ -63,7 +63,7 @@ def fetch_yelp_data(state):
         offset += limit
         print(donut_shops)
         
-        Upsert shops for each state to db        
+        # Upsert shops for each state to db        
         connection = db_connect()
         cursor = connection.cursor()
         for shop in donut_shops:
@@ -81,17 +81,7 @@ for state in STATES:
 if not scheduler.running:
     scheduler.start()
     
-
-# scheduler = BackgroundScheduler(daemon=True)
-# # possible add each state as individual job
-# for state in STATES:
-#     scheduler.add_job(fetch_yelp_data, 'interval', seconds=10)
-#     scheduler.start()
-#     scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
-#     print(state)
-
 # Multi row, single column state tracker - get through all pages then reset offset
-# Scenario - encounter error - keep goin w/jobs - mark offset in db
 
 
 #logging.getLogger('apscheduler').setLevel(logging.DEBUG)

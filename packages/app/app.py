@@ -30,8 +30,6 @@ def db_connect():
 
 # Detect errors
 def detect_error():
-    # TODO Handle errors - possibly update function to: https://github.com/Yelp/yelp-python/blob/master/yelp/errors.py
-    # Message + status code and that's all I need
     if response.status_code:
         print('Error!'.format(response.status_code))
     elif response.status_code == 200:
@@ -49,23 +47,29 @@ def fetch_yelp_data(state):
     headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
     donut_shops = []
-    limit = 50
+    limit = 20
     offset = 0
-    while offset <= 50:
-        params = {'term': 'donut', 'location': state[0], 'limit': 20, 'offset': 0}
+    # Potential pauses between each loop of offset b/c yelp api errors - Random number 
+    while offset <= 40:
+        params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
         # Get request response. Set timeout to stop requests from waiting after 5 seconds
         response = requests.get(url, params=params, headers=headers, timeout=5)
+        # if response.status_code:
+        #     print('Error!'.format(response.status_code))
+        # elif response.status_code == 200:
+        # Look at businesses value
         businesses = json.loads(response.text)['businesses']
         # Append results to the donut_shops array
         for business in businesses:
             donut_shops.append(business)
                 
         offset += limit
-        print(donut_shops)
+        #print(donut_shops)
         
         # Upsert shops for each state to db        
         connection = db_connect()
         cursor = connection.cursor()
+        # Insert businesses - not for shop in donut_shops
         for shop in donut_shops:
             cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
             (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
@@ -75,15 +79,14 @@ def fetch_yelp_data(state):
 
 scheduler = BackgroundScheduler(daemon=True)
 # Add each state as individual job
+scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 for state in STATES:
-    scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
+    #TODO look at listener
     scheduler.add_job(fetch_yelp_data, 'interval', args=[state], max_instances=1, seconds=10)
 if not scheduler.running:
     scheduler.start()
     
 # Multi row, single column state tracker - get through all pages then reset offset
-
-
 #logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
 # Configure application

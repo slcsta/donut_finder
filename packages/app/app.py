@@ -30,13 +30,7 @@ def db_connect():
     connection.row_factory = sql.Row
     return connection
 
-# Detect errors
-def detect_error():
-    if response.status_code:
-        print('Error!'.format(response.status_code))
-    elif response.status_code == 200:
-        data = json.loads(response.text)
-
+# Detect events and log them
 def my_listener(event):
     if event.exception:
         logging.warning('The job crashed :(')     
@@ -72,7 +66,7 @@ def fetch_yelp_data(state):
             connection.close()
 
 scheduler = BackgroundScheduler(daemon=True)
-# Add each state as individual job
+# Add fetch data job for each state
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 for state in STATES:
     scheduler.add_job(fetch_yelp_data, 'interval', args=[state], max_instances=1, seconds=10)
@@ -81,10 +75,10 @@ if not scheduler.running:
     
 #logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
-# Configure application
+# Configure Flask app
 app = Flask(__name__)
 
-# This still returns false 
+# Enable app and scheduler to run in parallel
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0', use_reloader=False)
     

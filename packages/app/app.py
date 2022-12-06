@@ -27,7 +27,7 @@ def db_connect():
     connection.row_factory = sql.Row
     return connection
 
-# Detects events and logs them
+# Detects and logs events
 def my_listener(event):
     if event.exception:
         logging.warning('The job crashed :(')     
@@ -40,7 +40,7 @@ def fetch_yelp_data(state):
     headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
     
-    # Paginates results
+    # Paginates results using offset and limit
     sleep(randint(10, 30))
     offset = 0
     while offset <= 4:

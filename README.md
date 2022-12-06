@@ -2,7 +2,14 @@
 
 #### Video Demo: <URL HERE>
 #### Description
-A web-based application using Python and SQL
+
+I developed Donut_Finder as my final project for CS50.
+
+Donut_Finder is a web-based application that employs data from the Yelp Fusion API to search and locate donut shops by city and state.  
+
+The Donut_Finder repository is structured as a single-package monorepo configured with PNPM, ASDF, and Changesets. The app-centric packages folder contains the buildable and deployable applications for the project including the Python code for the Flask web server. 
+
+When a user navigates to Donut_Finder, the landing page defaults to displaying all of the donut shops stored in the SQLite database. From there, a user can filter donut shops by location. The landing page also includes a search form requiring an inputted city and a selected state from a pre-populated drop-down list. When submitted, the form retrieves the filtered set of data from the database and then renders the filtered list of donut shops according to the search.
 
 Embed link to video walk through here
 
@@ -15,6 +22,7 @@ Examples
 # Links
 
 #### A list of links to relevant documentation for this design:
+
 [Python Documentation](https://docs.python.org/3/)
 [Flask Documentation](https://flask.palletsprojects.com/en/2.2.x/)
 [Jinja Documentation](https://jinja.palletsprojects.com/en/3.1.x/)
@@ -23,11 +31,13 @@ Examples
 [APScheduler Documentation](https://apscheduler.readthedocs.io/en/latest/modules/schedulers/background.html)
 [CS50 Final Project Guidelines](https://cs50.harvard.edu/x/2022/project/)
 
-
 # Contributing
 
 # Assumptions
 
 # Questions
+
+If you have any questions about the project, you can reach me here:
+Email: sarahlchavez@gmail.com
 
 

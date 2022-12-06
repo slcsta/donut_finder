@@ -59,7 +59,6 @@ def fetch_yelp_data(state):
             cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
             (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
             connection.commit()
- 
         if offset == 40:
             break
             connection.close()
@@ -69,8 +68,8 @@ scheduler = BackgroundScheduler(daemon=True)
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 for state in STATES:
     scheduler.add_job(fetch_yelp_data, 'interval', args=[state], max_instances=1, seconds=10)
-if not scheduler.running:
-    scheduler.start()
+# if not scheduler.running:
+#     scheduler.start()
     
 logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
@@ -91,7 +90,7 @@ def index():
     
     # Case: city and state are provided by user and available to use.
     if city and state:
-        cursor.execute("SELECT * FROM shops WHERE city=? COLLATE NOCASE AND state=? COLLATE NOCASE", (city, state))
+        cursor.execute("SELECT * FROM shops WHERE city=? COLLATE NOCASE AND state=? COLLATE NOCASE ORDER BY state, city, name, address, rating", (city, state))
         table_title = "Donut Shop Search Results"
         shops = cursor.fetchall()
         connection.close()

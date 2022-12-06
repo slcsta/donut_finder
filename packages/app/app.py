@@ -13,8 +13,6 @@ load_dotenv()
 
 logging.basicConfig()
 
-scheduler = BackgroundScheduler(daemon=True)
-
 STATES = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
     ('DE', 'Delaware'), ('FL', 'Florida'), ('GA', 'Georgia'), ('HI', 'Hawaii'), ('ID', 'Idaho'), ('IL', 'Illinois'), ('IN', 'Indiana'), ('IA', 'Iowa'),
     ('KS', 'Kansas'), ('KY', 'Kentucky'), ('LA', 'Louisiana'), ('ME', 'Maine'), ('MD', 'Maryland'), ('MA', 'Massachusetts'), ('MI', 'Michigan'), 
@@ -65,10 +63,9 @@ def fetch_yelp_data(state):
         if offset == 40:
             break
             connection.close()
-            #sleep(randint(10, 30))
 
 # Schedules jobs
-#scheduler = BackgroundScheduler(daemon=True)
+scheduler = BackgroundScheduler(daemon=True)
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 for state in STATES:
     scheduler.add_job(fetch_yelp_data, 'interval', args=[state], max_instances=1, seconds=10)

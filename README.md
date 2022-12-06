@@ -9,7 +9,9 @@ Donut_Finder is a web-based application that employs data from the Yelp Fusion A
 
 The Donut_Finder repository is structured as a single-package monorepo configured with PNPM, ASDF, and Changesets. The app-centric packages folder contains the buildable and deployable applications for the project including the Python code for the Flask web server. 
 
-When a user navigates to Donut_Finder, the landing page defaults to displaying all of the donut shops stored in the SQLite database. From there, a user can filter donut shops by location. The landing page also includes a search form requiring an inputted city and a selected state from a pre-populated drop-down list. When submitted, the form retrieves the filtered set of data from the database and then renders the filtered list of donut shops according to the search.
+When a user navigates to Donut_Finder, the landing page defaults to displaying all of the donut shops stored in the SQLite database. From there, a user can filter donut shops by location. The landing page has a search form requiring an inputted city and a selected state from a pre-populated drop-down list. When submitted, the form retrieves the filtered set of data from the database and then renders the filtered list of donut shops according to the search.
+
+Donut_Finder also makes use of APScheduler to carry out Yelp Fusion API calls. The scheduler runs in the background inside of the Flask app and schedules a job queu that executes Yelp API calls to fetch donut shops by state. API calls by state are paginated, making several calls to retrieve more records. With every data retrieval job, data is upserted into the database.
 
 Embed link to video walk through here
 

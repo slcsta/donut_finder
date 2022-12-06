@@ -103,6 +103,6 @@ def index():
     # Case: city and state are undefined, first time visit to page.
     else:
         table_title = "All Donut Shops"
-        shops = cursor.execute("SELECT * FROM shops").fetchall()
+        shops = cursor.execute("SELECT * FROM shops ORDER BY state, city, name, address, rating").fetchall()
         connection.close()
         return render_template("index.html", shops=shops, table_title=table_title, states=STATES)

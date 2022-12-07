@@ -9,9 +9,9 @@ Donut_Finder is a web-based application that employs data from the Yelp Fusion A
 
 The Donut_Finder repository is structured as a single-package monorepo configured with PNPM, ASDF, and Changesets. The app-centric packages folder contains the buildable and deployable applications for the project including the Python code for the Flask web server. 
 
-When a user navigates to Donut_Finder, the landing page defaults to displaying all of the donut shops stored in the SQLite database. From there, a user can filter donut shops by location. The landing page has a search form requiring an inputted city and a selected state from a pre-populated drop-down list. When submitted, the form retrieves the filtered set of data from the database and then renders the filtered list of donut shops according to the search.
+When a user navigates to Donut_Finder, the page displays all of the donut shops stored in the SQLite database on index.html. From there, a user can input a city and select a state from a pre-populated drop-down list to filter donut shops by location. If filtering inputs are submitted, an SQLite query is executed to get the matching donut shops, and then rendering them on index.html. A submitted query returning no results notifies the user by rendering an apology that no results were found. 
 
-Donut_Finder also makes use of APScheduler to carry out Yelp Fusion API calls. The scheduler runs in the background inside of the Flask app and schedules a job queu that executes Yelp API calls to fetch donut shops by state. API calls by state are paginated, making several calls to retrieve more records. With every data retrieval job, data is upserted into the database.
+In the background of the app, APScheduler is employed to concurrently fetch data from the Yelp Fusion API. BackgroundScheduler uses a separate thread inside the app by initiating a scheduler. The scheduler adds jobs to a queu and then each job executes according to its assigned interval and task, retrieving donut shop data on a per state basis from the API. With every retrieval, data is upserted into the database.
 
 Embed link to video walk through here
 

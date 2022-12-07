@@ -80,7 +80,7 @@ app = Flask(__name__)
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0', use_reloader=False)
     
-# Displays all db entries on index.html & renders donut shops by city & state on search.html
+# Displays all db entries & renders donut shops by city & state on index.html
 @app.route("/", methods=['GET'])
 def index():
     connection = db_connect()

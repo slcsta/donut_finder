@@ -44,16 +44,19 @@ def fetch_yelp_data(state):
     url = 'https://api.yelp.com/v3/businesses/search'
     
     # Paginates results using offset and limit
+    # Put a note limiting this to reduce # of loops
+    # Address error scenarios 
     limit = 2
+    # May not have to intialize 
     offset = 0
     while offset <= 4:
-        print(offset) 
         params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
         response = requests.get(url, params=params, headers=headers, timeout=15)
         print(response)
         donut_shops = response.json()['businesses']
         print(donut_shops)
-        # Upserts donut shops  
+        # Upserts donut shops 
+        # Batch insert these - Look up sqlite docs on this 
         for shop in donut_shops:
             print(shop["name"])      
         connection = db_connect()
@@ -62,12 +65,11 @@ def fetch_yelp_data(state):
             cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (address) DO NOTHING",
             (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
             connection.commit()
+        # could instead pull the offset number from the response
         offset += limit
-        if offset == 4:
-            print(offset)
-            break
-            connection.close()
         sleep(randint(10, 30))
+    connection.close()
+    
 
 # Schedules jobs
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)

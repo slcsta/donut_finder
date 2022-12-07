@@ -44,11 +44,12 @@ def fetch_yelp_data(state):
     url = 'https://api.yelp.com/v3/businesses/search'
     
     # Paginates results using offset and limit
-    sleep(randint(10, 30))
+    limit = 2
     offset = 0
+    print(offset)
     while offset <= 4:
-        offset += 2   
-        params = {'term': 'donut', 'location': state[0], 'limit': 2, 'offset': offset}
+        print(offset) 
+        params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
         response = requests.get(url, params=params, headers=headers, timeout=15)
         print(response)
         donut_shops = response.json()['businesses']
@@ -62,9 +63,12 @@ def fetch_yelp_data(state):
             cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (address) DO NOTHING",
             (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
             connection.commit()
-        if offset == 40:
+        offset += limit
+        if offset == 4:
+            print(offset)
             break
             connection.close()
+        sleep(randint(10, 30))
 
 # Schedules jobs
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)

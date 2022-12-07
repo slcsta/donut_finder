@@ -12,6 +12,9 @@ from apscheduler.schedulers.background import BackgroundScheduler
 load_dotenv()
 
 logging.basicConfig()
+logging.getLogger('apscheduler').setLevel(logging.DEBUG)
+
+scheduler = BackgroundScheduler(daemon=True)
 
 STATES = [('AL', 'Alabama'), ('AK', 'Alaska'), ('AZ', 'Arizona'), ('AR', 'Arkansas'), ('CA', 'California'), ('CO', 'Colorado'), ('CT', 'Connecticut'),
     ('DE', 'Delaware'), ('FL', 'Florida'), ('GA', 'Georgia'), ('HI', 'Hawaii'), ('ID', 'Idaho'), ('IL', 'Illinois'), ('IN', 'Indiana'), ('IA', 'Iowa'),
@@ -56,7 +59,7 @@ def fetch_yelp_data(state):
         connection = db_connect()
         cursor = connection.cursor()
         for shop in donut_shops:
-            cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
+            cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (address) DO NOTHING",
             (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
             connection.commit()
         if offset == 40:
@@ -64,22 +67,19 @@ def fetch_yelp_data(state):
             connection.close()
 
 # Schedules jobs
-scheduler = BackgroundScheduler(daemon=True)
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 for state in STATES:
     scheduler.add_job(fetch_yelp_data, 'interval', args=[state], max_instances=1, seconds=10)
     if not scheduler.running:
         scheduler.start()
     
-logging.getLogger('apscheduler').setLevel(logging.DEBUG)
-
 # Configures Flask app
 app = Flask(__name__)
 
-# Enables app and scheduler to run simultaneous
+# Enables app and scheduler to run concurrently
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0', use_reloader=False)
-    
+
 # Displays all db entries & renders donut shops by city & state on index.html
 @app.route("/", methods=['GET'])
 def index():

@@ -9,21 +9,24 @@ Donut_Finder is a web-based application that employs data from the Yelp Fusion A
 
 The Donut_Finder repository is structured as a single-package monorepo configured with PNPM as the package manager, ASDF, and Changesets. The app-centric packages folder contains the buildable and deployable applications for the project including the Python code for the Flask web server. 
 
-When a user navigates to Donut_Finder, the page displays all of the donut shops stored in the SQLite database on index.html. From there, a user can input a city and select a state from a pre-populated drop-down list to filter donut shops by location. If filtering inputs are submitted, an SQLite query is executed to get the matching donut shops. Flask then renders the matching donut shops on index.html. If a submitted query return no results, Flask notifies the user by rendering an apology. 
+When a user navigates to Donut_Finder, the page displays all of the donut shops stored in the SQLite database on index.html. From there, a user can filter donut shops by location by inputting a city and selecting a state from the pre-populated drop-down list. If filtering inputs are submitted, an SQLite query is executed to get the matching donut shops. Flask then renders the matching donut shops on index.html. If a query returns no results, Flask notifies the user by rendering an apology. 
 
-In the background of the app, APScheduler is employed to concurrently fetch data from the Yelp Fusion API. BackgroundScheduler uses a separate thread inside the app by initiating a scheduler. The scheduler adds jobs to a queu and then each job executes according to its assigned interval and task. Each job retrieves donut shop data on a per state basis from the API. With every retrieval, data is upserted into the database.
+In the background of the app, APScheduler is used to concurrently fetch data from the Yelp Fusion API. BackgroundScheduler runs a separate thread inside the app by initiating a scheduler to add jobs to a queu. Each job retrieves donut shop data on a per state basis from the Yelp Fusion API. The API returns up to 50 results at a time. The parameters limit and offset enable paginated results by making several data retrievals for each state.
 
 Embed link to video walk through here
 
 # Installation
 
-Instructions for installing
+Once you have cloned the repository, navigate to the root project directory and run: 
 
-Once you have cloned the repository, navigate to the root project directory and run 
+`pnpm install`
 
-pnpm install
+This will install all dependencies for the project.
 
-This will install all dependencies.
+You will need your own Yelp Fusion API key. Head to the link below and follow all instructions for setting up your access to the Yelp Fusion API:
+
+[Yelp Fusion API](https://docs.developer.yelp.com/docs/fusion-intro)
+
 
 # Links
 
@@ -36,10 +39,6 @@ This will install all dependencies.
 [Yelp Fusion API](https://docs.developer.yelp.com/docs/fusion-intro)
 [APScheduler Documentation](https://apscheduler.readthedocs.io/en/latest/modules/schedulers/background.html)
 [CS50 Final Project Guidelines](https://cs50.harvard.edu/x/2022/project/)
-
-# Contributing
-
-# Assumptions
 
 # Questions
 

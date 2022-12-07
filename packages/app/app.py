@@ -46,7 +46,6 @@ def fetch_yelp_data(state):
     # Paginates results using offset and limit
     limit = 2
     offset = 0
-    print(offset)
     while offset <= 4:
         print(offset) 
         params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
@@ -73,7 +72,7 @@ def fetch_yelp_data(state):
 # Schedules jobs
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 for state in STATES:
-    scheduler.add_job(fetch_yelp_data, 'interval', args=[state], max_instances=1, seconds=10)
+    scheduler.add_job(fetch_yelp_data, 'interval', args=[state], seconds=15)
     if not scheduler.running:
         scheduler.start()
     

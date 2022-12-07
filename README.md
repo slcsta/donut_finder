@@ -27,6 +27,13 @@ You will need your own Yelp Fusion API key. Head to the link below and follow al
 
 [Yelp Fusion API](https://docs.developer.yelp.com/docs/fusion-intro)
 
+Activate the virtual environment from the root folder:
+
+`. venv/bin/activate`
+
+Navigate to the app folder and run the flask app:
+
+`flask --app app run`
 
 # Links
 

@@ -7,7 +7,7 @@ I developed Donut_Finder as my final project for CS50.
 
 Donut_Finder is a web-based application that employs data from the Yelp Fusion API to locate donut shops by city and state.  
 
-The Donut_Finder repository is structured as a single-package monorepo configured with PNPM, ASDF, and Changesets. The app-centric packages folder contains the buildable and deployable applications for the project including the Python code for the Flask web server. 
+The Donut_Finder repository is structured as a single-package monorepo configured with PNPM as the package manager, ASDF, and Changesets. The app-centric packages folder contains the buildable and deployable applications for the project including the Python code for the Flask web server. 
 
 When a user navigates to Donut_Finder, the page displays all of the donut shops stored in the SQLite database on index.html. From there, a user can input a city and select a state from a pre-populated drop-down list to filter donut shops by location. If filtering inputs are submitted, an SQLite query is executed to get the matching donut shops. Flask then renders the matching donut shops on index.html. If a submitted query return no results, Flask notifies the user by rendering an apology. 
 
@@ -18,7 +18,12 @@ Embed link to video walk through here
 # Installation
 
 Instructions for installing
-Examples
+
+Once you have cloned the repository, navigate to the root project directory and run 
+
+pnpm install
+
+This will install all dependencies.
 
 # Links
 

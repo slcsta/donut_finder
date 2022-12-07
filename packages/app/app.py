@@ -68,8 +68,8 @@ scheduler = BackgroundScheduler(daemon=True)
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 for state in STATES:
     scheduler.add_job(fetch_yelp_data, 'interval', args=[state], max_instances=1, seconds=10)
-# if not scheduler.running:
-#     scheduler.start()
+    if not scheduler.running:
+        scheduler.start()
     
 logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 

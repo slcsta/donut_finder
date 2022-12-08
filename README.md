@@ -1,6 +1,6 @@
 # Donut Finder
 
-#### Video Demo: <URL HERE>
+#### Video Demo: <https://youtu.be/8hzaBFgAxV0>
 #### Description
 
 I developed Donut_Finder as my final project for CS50.
@@ -46,6 +46,9 @@ Navigate to the app folder and run the flask app:
 [Yelp Fusion API](https://docs.developer.yelp.com/docs/fusion-intro)
 [APScheduler Documentation](https://apscheduler.readthedocs.io/en/latest/modules/schedulers/background.html)
 [CS50 Final Project Guidelines](https://cs50.harvard.edu/x/2022/project/)
+
+# Contributors
+
 
 # Questions
 

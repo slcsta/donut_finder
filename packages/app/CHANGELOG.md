@@ -1,5 +1,11 @@
 # @slcsta/donut-finder
 
+## 0.4.0
+
+### Minor Changes
+
+- a2996a7: Retrieve donut shops from Yelp Fusion API, Handle pagination, errors, populate db
+
 ## 0.3.0
 
 ### Minor Changes

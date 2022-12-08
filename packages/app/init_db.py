@@ -9,6 +9,9 @@ with open('schema.sql') as s:
     connection.executescript(s.read())
 
 cursor = connection.cursor()
+
+# drop the db
+# cursor.execute("DROP DATABASE donut_shops")
     
 with open('response.json') as f:
     data = json.load(f)

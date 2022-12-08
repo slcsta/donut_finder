@@ -43,13 +43,10 @@ def fetch_yelp_data(state):
     headers = {'Authorization': 'Bearer {}'.format(API_KEY)}
     url = 'https://api.yelp.com/v3/businesses/search'
     
-    # Paginates results using offset and limit
-    # Put a note limiting this to reduce # of loops
-    # Address error scenarios 
-    limit = 2
-    # May not have to intialize 
+    # Paginates results using offset and limit 
+    limit = 20
     offset = 0
-    while offset <= 4:
+    while offset <= 40:
         params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
         response = requests.get(url, params=params, headers=headers, timeout=15)
         print(response)

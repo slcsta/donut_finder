@@ -47,9 +47,6 @@ Navigate to the app folder and run the flask app:
 [APScheduler Documentation](https://apscheduler.readthedocs.io/en/latest/modules/schedulers/background.html)
 [CS50 Final Project Guidelines](https://cs50.harvard.edu/x/2022/project/)
 
-# Contributors
-
-
 # Questions
 
 If you have any questions about the project, you can reach me here:

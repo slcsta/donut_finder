@@ -1,6 +1,5 @@
 # Donut Finder
 
-#### Video Demo: <https://youtu.be/8hzaBFgAxV0>
 #### Description
 
 I developed Donut_Finder as my final project for CS50.
@@ -11,9 +10,10 @@ The Donut_Finder repository is structured as a single-package monorepo configure
 
 When a user navigates to Donut_Finder, the page displays all of the donut shops stored in the SQLite database on index.html. From there, a user can filter donut shops by location by inputting a city and selecting a state from the pre-populated drop-down list. If filtering inputs are submitted, an SQLite query is executed to get the matching donut shops. Flask then renders the matching donut shops on index.html. If a query returns no results, Flask notifies the user by rendering an apology. 
 
-In the background of the app, APScheduler is used to concurrently fetch data from the Yelp Fusion API. BackgroundScheduler runs a separate thread inside the app by initiating a scheduler to add jobs to a queu. Each job retrieves donut shop data on a per state basis from the Yelp Fusion API. The API returns up to 50 results at a time. The parameters limit and offset enable paginated results by making several data retrievals for each state.
+In the background of the app, APScheduler is used to concurrently fetch data from the Yelp Fusion API. BackgroundScheduler runs a separate thread inside the app by initiating a scheduler to add jobs to a queu. Each job retrieves donut shop data on a per state basis from the Yelp Fusion API. The API returns up to 50 results at a time. The API's request parameters don't explicitly include pagination, however, using a combination of the parameters limit and offset can create a pagination effect. Limit controls the number of results returned, and offset determines from which point the next results will be returned. Currently, the scheduler sets job's limit to 20 and offset to 0, where offset increments by limit's value of 20 in a loop ranging from 0 to 40 for each job. Limit and offset can be manipulated to return different results.
 
-Embed link to video walk through here
+#### Video Demo: 
+<https://youtu.be/8hzaBFgAxV0>
 
 # Installation
 
@@ -53,6 +53,6 @@ Navigate to the app folder and run the flask app:
 # Questions
 
 If you have any questions about the project, you can reach me here:
-Email: sarahlchavez@gmail.com
+sarahlchavez@gmail.com
 
 

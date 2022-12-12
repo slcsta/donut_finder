@@ -18,11 +18,16 @@ body {
 }
 
 .header {
-    background-color: #477bff;
+    background-image: url(https://lrmonline.com/wp-content/uploads/2020/06/Simpsons-Donut.jpg);
+    background-size: 35%;
+    background-repeat: no-repeat;
+    background-position: Left;
+    background-color: #f280ca;
     color: #fff;
     margin-bottom: 2rem;
-    padding: 2rem 1rem;
+    padding: 2rem 3rem;
     text-align: center;
+    height: 100%
 }
 
 .section {

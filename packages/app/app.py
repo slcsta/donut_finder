@@ -49,6 +49,7 @@ def fetch_yelp_data(state):
     while offset <= 40:
         params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
         response = requests.get(url, params=params, headers=headers, timeout=15)
+        print(response)
         donut_shops = response.json()['businesses']
         rows = []
         for shop in donut_shops:
@@ -79,8 +80,8 @@ def fetch_yelp_data(state):
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 for state in STATES:
     scheduler.add_job(fetch_yelp_data, 'interval', args=[state], seconds=15)
-    if not scheduler.running:
-        scheduler.start()
+    # if not scheduler.running:
+    #     scheduler.start()
     
 # Configures Flask app
 app = Flask(__name__)

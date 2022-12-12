@@ -49,20 +49,27 @@ def fetch_yelp_data(state):
     while offset <= 40:
         params = {'term': 'donut', 'location': state[0], 'limit': limit, 'offset': offset}
         response = requests.get(url, params=params, headers=headers, timeout=15)
-        print(response)
         donut_shops = response.json()['businesses']
-        print(donut_shops)
-        # Upserts donut shops 
-        # Batch insert these - Look up sqlite docs on this 
+        rows = []
         for shop in donut_shops:
-            print(shop["name"])      
+            rows.append((
+                shop["name"], 
+                shop["url"], 
+                shop["rating"], 
+                shop["location"]["address1"], 
+                shop["location"]["address2"], 
+                shop["location"]["city"], 
+                shop["location"]["state"], 
+                shop["location"]["zip_code"], 
+                shop["display_phone"]
+            ))
+        #print(rows)
+
+        #Bulk upserts donut shops 
         connection = db_connect()
         cursor = connection.cursor()
-        for shop in donut_shops:
-            cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (address) DO NOTHING",
-            (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
-            connection.commit()
-        # could instead pull the offset number from the response
+        cursor.executemany("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (address) DO NOTHING", (rows))
+        connection.commit()
         offset += limit
         sleep(randint(10, 30))
     connection.close()

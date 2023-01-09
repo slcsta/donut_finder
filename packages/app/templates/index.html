@@ -5,8 +5,12 @@
 {% endblock %}
 
 {% block main %}
-<div class="content">
+<div class="section">
+    {% if selected_city is undefined %}
     <h2>{{ table_title }}</h2>
+    {% else %}
+    <h2>{{ table_title }} {{ selected_city }}, {{ selected_state }}</h2>
+    {% endif %}
     <table>
         <thead>
             <tr>

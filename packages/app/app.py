@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flask_bootstrap import Bootstrap
 import sqlite3 as sql
 import requests, json, os, time, logging
 from random import randint
@@ -51,18 +52,26 @@ def fetch_yelp_data(state):
         response = requests.get(url, params=params, headers=headers, timeout=15)
         print(response)
         donut_shops = response.json()['businesses']
-        print(donut_shops)
-        # Upserts donut shops 
-        # Batch insert these - Look up sqlite docs on this 
+        rows = []
         for shop in donut_shops:
-            print(shop["name"])      
+            rows.append((
+                shop["name"], 
+                shop["url"], 
+                shop["rating"], 
+                shop["location"]["address1"], 
+                shop["location"]["address2"], 
+                shop["location"]["city"], 
+                shop["location"]["state"], 
+                shop["location"]["zip_code"], 
+                shop["display_phone"]
+            ))
+        #print(rows)
+
+        #Bulk upserts donut shops 
         connection = db_connect()
         cursor = connection.cursor()
-        for shop in donut_shops:
-            cursor.execute("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (address) DO NOTHING",
-            (shop["name"], shop["url"], shop["rating"], shop["location"]["address1"], shop["location"]["address2"], shop["location"]["city"], shop["location"]["state"], shop["location"]["zip_code"], shop["display_phone"]))
-            connection.commit()
-        # could instead pull the offset number from the response
+        cursor.executemany("INSERT INTO shops (name, website, rating, address, address2, city, state, zip_code, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (address) DO NOTHING", (rows))
+        connection.commit()
         offset += limit
         sleep(randint(10, 30))
     connection.close()
@@ -72,8 +81,8 @@ def fetch_yelp_data(state):
 scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 for state in STATES:
     scheduler.add_job(fetch_yelp_data, 'interval', args=[state], seconds=15)
-    if not scheduler.running:
-        scheduler.start()
+    # if not scheduler.running:
+    #     scheduler.start()
     
 # Configures Flask app
 app = Flask(__name__)
@@ -93,12 +102,12 @@ def index():
     # Case: city and state are provided by user and available to use.
     if city and state:
         cursor.execute("SELECT * FROM shops WHERE city=? COLLATE NOCASE AND state=? COLLATE NOCASE ORDER BY state, city, name, address, rating", (city, state))
-        table_title = "Donut Shop Search Results"
+        table_title = "Donut Shop Results for"
         shops = cursor.fetchall()
         connection.close()
         
         if len(shops) == 0:
-            return render_template("apology.html", message="No Matches - Please Try Again,", states=STATES, code=403, selected_city=city, selected_state=state)
+            return render_template("apology.html", message="No Matches - Please Try Again,", states=STATES, code=204, selected_city=city, selected_state=state)
         return render_template("index.html", shops=shops, table_title=table_title, states=STATES, selected_city=city, selected_state=state)
 
     # Case: city and state are undefined, first time visit to page.

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flask_bootstrap import Bootstrap
 import sqlite3 as sql
 import requests, json, os, time, logging
 from random import randint
@@ -101,12 +102,12 @@ def index():
     # Case: city and state are provided by user and available to use.
     if city and state:
         cursor.execute("SELECT * FROM shops WHERE city=? COLLATE NOCASE AND state=? COLLATE NOCASE ORDER BY state, city, name, address, rating", (city, state))
-        table_title = "Donut Shop Search Results"
+        table_title = "Donut Shop Results for"
         shops = cursor.fetchall()
         connection.close()
         
         if len(shops) == 0:
-            return render_template("apology.html", message="No Matches - Please Try Again,", states=STATES, code=403, selected_city=city, selected_state=state)
+            return render_template("apology.html", message="No Matches - Please Try Again,", states=STATES, code=204, selected_city=city, selected_state=state)
         return render_template("index.html", shops=shops, table_title=table_title, states=STATES, selected_city=city, selected_state=state)
 
     # Case: city and state are undefined, first time visit to page.
